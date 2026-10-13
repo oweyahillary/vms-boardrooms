@@ -1,0 +1,6 @@
+node_modules/
+.env
+app.log
+.env.env.example
+frontend/node_modules/
+public/app/

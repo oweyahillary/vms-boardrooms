@@ -1,0 +1,21 @@
+# Render Blueprint — single service (Option A): Express serves both the
+# API and the static frontend from one Web Service.
+services:
+  - type: web
+    name: vms
+    runtime: node
+    plan: free
+    buildCommand: npm install && npm --prefix frontend install && npm --prefix frontend run build
+    startCommand: node index.js
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        sync: false      # set in the Render dashboard (secret)
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_KEY
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: APP_URL
+        sync: false      # e.g. https://vms.onrender.com

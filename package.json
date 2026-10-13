@@ -1,0 +1,22 @@
+{
+  "name": "vms-backend",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "helmet": "^7.0.0",
+    "dotenv": "^16.0.0",
+    "pg": "^8.11.0",
+    "@supabase/supabase-js": "^2.0.0",
+    "winston": "^3.10.0",
+    "bcrypt": "^5.1.0",
+    "jsonwebtoken": "^9.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.0"
+  }
+}

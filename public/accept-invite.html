@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Accept invitation — Vivo VMS</title>
+    <style>
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      body { font-family: -apple-system, "Helvetica Neue", Arial, sans-serif; background: #edeae2; color: #2c2c2a; display: flex; min-height: 100vh; align-items: center; justify-content: center; padding: 1.5rem; }
+      .card { background: #f5f1ea; width: 100%; max-width: 400px; border-radius: 12px; box-shadow: 0 8px 28px rgba(0,0,0,.1); overflow: hidden; }
+      header { background: #161412; padding: 1.1rem 1.4rem; }
+      .wordmark { font-weight: 600; letter-spacing: 1.5px; color: #f0997b; font-size: 15px; }
+      .sub { font-size: 11px; letter-spacing: 1px; color: #d3d1c7; text-transform: uppercase; margin-top: 2px; }
+      .body { padding: 1.4rem; }
+      h1 { font-size: 17px; margin-bottom: 4px; }
+      .greet { font-size: 13px; color: #5f5e5a; margin-bottom: 1.2rem; }
+      label { font-size: 11px; color: #888780; display: block; margin-bottom: 4px; }
+      input { width: 100%; padding: 10px 12px; border: 1px solid #d3d1c7; border-radius: 6px; font-size: 14px; margin-bottom: 12px; font-family: inherit; }
+      button { width: 100%; background: #d85a30; color: #faece7; border: none; border-radius: 6px; font-size: 14px; padding: 12px; font-weight: 600; cursor: pointer; }
+      button:disabled { opacity: .6; cursor: default; }
+      .msg { font-size: 13px; margin-top: 12px; text-align: center; }
+      .msg.err { color: #c8593a; }
+      .msg.ok { color: #2e5a3a; }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <header>
+        <div class="wordmark">VIVO</div>
+        <div class="sub">Visitor Management</div>
+      </header>
+      <div class="body">
+        <h1>Set your password</h1>
+        <div class="greet" id="greet">Checking your invitation…</div>
+        <div id="form" style="display: none">
+          <label>New password (min 8 characters)</label>
+          <input type="password" id="pw" autocomplete="new-password" />
+          <label>Confirm password</label>
+          <input type="password" id="pw2" autocomplete="new-password" />
+          <button id="submit">Activate my account</button>
+        </div>
+        <div class="msg" id="msg"></div>
+      </div>
+    </div>
+    <script>
+      const token = new URLSearchParams(location.search).get("token");
+      const greet = document.getElementById("greet");
+      const form = document.getElementById("form");
+      const msg = document.getElementById("msg");
+
+      function show(text, cls) { msg.textContent = text; msg.className = "msg " + (cls || ""); }
+
+      async function load() {
+        if (!token) { greet.textContent = "This link is missing its token."; return; }
+        try {
+          const res = await fetch("/api/admin/invite?token=" + encodeURIComponent(token));
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error || "Invalid invite.");
+          greet.textContent = `Welcome, ${data.name}. Set a password to activate ${data.email}.`;
+          form.style.display = "block";
+        } catch (e) { greet.textContent = e.message; }
+      }
+
+      document.getElementById("submit").addEventListener("click", async () => {
+        const pw = document.getElementById("pw").value;
+        const pw2 = document.getElementById("pw2").value;
+        if (pw.length < 8) return show("Password must be at least 8 characters.", "err");
+        if (pw !== pw2) return show("Passwords do not match.", "err");
+        const btn = document.getElementById("submit");
+        btn.disabled = true;
+        try {
+          const res = await fetch("/api/admin/accept-invite", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ token, password: pw }),
+          });
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error || "Could not activate.");
+          form.style.display = "none";
+          show("✅ Account activated. You can now log in.", "ok");
+          setTimeout(() => (location.href = "/app"), 1600);
+        } catch (e) { show(e.message, "err"); btn.disabled = false; }
+      });
+
+      load();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,2613 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="apple-mobile-web-app-title" content="Vivo Visitors" />
+    <title>Vivo Fashion Group — Visitor Register</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Nunito+Sans:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #faf8f5;
+        --surface: #ffffff;
+        --surface2: #f4f0ea;
+        --border: #e0d9cf;
+        --accent: #c8593a;
+        --accent2: #a0401f;
+        --green: #2e5a3a;
+        --green2: #1e3d28;
+        --text: #1a1208;
+        --muted: #8a7e72;
+        --success: #2e5a3a;
+        --error: #c8593a;
+        --radius: 10px;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        -webkit-tap-highlight-color: transparent;
+      }
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        font-family: "Nunito Sans", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+        overflow-x: hidden;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* HEADER */
+      .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 20px;
+        height: 68px;
+        border-bottom: 3px solid var(--accent);
+        background: var(--green);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .logo-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        background: var(--accent);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        flex-shrink: 0;
+      }
+      .logo-text {
+        font-family: "Playfair Display", serif;
+        font-size: clamp(16px, 3.5vw, 22px);
+        color: #fff;
+        letter-spacing: 0.3px;
+        line-height: 1.2;
+      }
+      .logo-sub {
+        font-size: 10px;
+        color: rgba(255, 255, 255, 0.6);
+        letter-spacing: 2px;
+        text-transform: uppercase;
+      }
+      .clock {
+        text-align: right;
+      }
+      .clock-time {
+        font-family: "Playfair Display", serif;
+        font-size: clamp(20px, 4vw, 26px);
+        color: #fff;
+        line-height: 1;
+      }
+      .clock-date {
+        font-size: 10px;
+        color: rgba(255, 255, 255, 0.6);
+        margin-top: 2px;
+      }
+
+      /* STEPS */
+      .steps-bar {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 12px;
+        height: 58px;
+        background: var(--surface);
+        border-bottom: 1px solid var(--border);
+        overflow-x: auto;
+        gap: 0;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+      }
+      .steps-bar::-webkit-scrollbar {
+        display: none;
+      }
+      .step {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        color: var(--muted);
+        font-weight: 600;
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+      .step.active {
+        color: var(--accent);
+      }
+      .step.done {
+        color: var(--green);
+      }
+      .step-num {
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        border: 2px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: 700;
+        transition: all 0.3s;
+        flex-shrink: 0;
+      }
+      .step.active .step-num {
+        border-color: var(--accent);
+        background: var(--accent);
+        color: #fff;
+      }
+      .step.done .step-num {
+        border-color: var(--green);
+        background: var(--green);
+        color: #fff;
+      }
+      .step-line {
+        width: 20px;
+        height: 1px;
+        background: var(--border);
+        flex-shrink: 0;
+      }
+      @media (max-width: 420px) {
+        .step span {
+          display: none;
+        }
+        .step-line {
+          width: 12px;
+        }
+      }
+
+      /* MAIN */
+      .main {
+        padding: 24px 16px 80px;
+        max-width: 860px;
+        margin: 0 auto;
+      }
+      .page {
+        display: none;
+        animation: fadeIn 0.3s ease;
+      }
+      .page.active {
+        display: block;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      /* WELCOME */
+      .welcome-hero {
+        text-align: center;
+        padding: 28px 12px 36px;
+      }
+      .welcome-hero h1 {
+        font-family: "Playfair Display", serif;
+        font-size: clamp(28px, 7vw, 50px);
+        line-height: 1.15;
+        margin-bottom: 12px;
+        color: var(--text);
+      }
+      .welcome-hero h1 span {
+        color: var(--accent);
+        font-style: italic;
+      }
+      .welcome-hero p {
+        font-size: clamp(14px, 2.5vw, 17px);
+        color: var(--muted);
+        max-width: 420px;
+        margin: 0 auto 32px;
+      }
+
+      /* VISIT CARDS */
+      .visit-type-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+        margin-bottom: 28px;
+      }
+      @media (max-width: 640px) {
+        .visit-type-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      .visit-card {
+        background: var(--surface);
+        border: 2px solid var(--border);
+        border-radius: var(--radius);
+        padding: 18px 10px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s;
+        position: relative;
+        overflow: hidden;
+        -webkit-user-select: none;
+        user-select: none;
+      }
+      .visit-card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+      .visit-card:active {
+        transform: scale(0.96);
+      }
+      .visit-card.selected {
+        border-color: var(--accent);
+        background: #fff8f6;
+      }
+      .visit-card.selected::before {
+        opacity: 0.07;
+      }
+      .visit-card-icon {
+        font-size: 28px;
+        margin-bottom: 7px;
+        position: relative;
+      }
+      .visit-card-label {
+        font-weight: 700;
+        font-size: 13px;
+        margin-bottom: 2px;
+        position: relative;
+      }
+      .visit-card-desc {
+        font-size: 11px;
+        color: var(--muted);
+        position: relative;
+      }
+
+      /* CHECKOUT CARD — same structure as visit card, distinct green accent */
+      .checkout-card {
+        background: var(--surface);
+        border: 2px solid var(--border);
+        border-radius: var(--radius);
+        padding: 18px 10px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s;
+        position: relative;
+        overflow: hidden;
+        -webkit-user-select: none;
+        user-select: none;
+        grid-column: 1 / -1; /* full width below the grid */
+      }
+      .checkout-card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, #2e5a3a, #4a8c5c);
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+      .checkout-card:active {
+        transform: scale(0.97);
+      }
+      .checkout-card:hover {
+        border-color: #2e5a3a;
+      }
+      .checkout-card:hover::before {
+        opacity: 0.06;
+      }
+      .checkout-card-inner {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 14px;
+        position: relative;
+      }
+      .checkout-card-icon {
+        font-size: 32px;
+        line-height: 1;
+      }
+      .checkout-card-text {
+        text-align: left;
+      }
+      .checkout-card-label {
+        font-weight: 700;
+        font-size: 14px;
+        color: var(--text);
+        margin-bottom: 2px;
+      }
+      .checkout-card-desc {
+        font-size: 11px;
+        color: var(--muted);
+      }
+
+      /* FORM */
+      .form-section {
+        margin-bottom: 24px;
+      }
+      .section-title {
+        font-family: "Playfair Display", serif;
+        font-size: 19px;
+        margin-bottom: 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        color: var(--text);
+      }
+      .section-tag {
+        font-family: "Nunito Sans", sans-serif;
+        font-size: 10px;
+        background: var(--accent);
+        color: #fff;
+        font-weight: 700;
+        padding: 2px 7px;
+        border-radius: 4px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+      }
+      .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+      .form-grid.full {
+        grid-template-columns: 1fr;
+      }
+      @media (max-width: 560px) {
+        .form-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .host-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 12px;
+      }
+      @media (max-width: 560px) {
+        .host-row {
+          grid-template-columns: 1fr;
+        }
+      }
+      .field {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .field label {
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--muted);
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+      }
+      .field input,
+      .field select,
+      .field textarea {
+        background: #fff;
+        border: 1.5px solid var(--border);
+        color: var(--text);
+        padding: 13px 14px;
+        border-radius: var(--radius);
+        font-family: "Nunito Sans", sans-serif;
+        font-size: 16px;
+        transition:
+          border-color 0.2s,
+          box-shadow 0.2s;
+        outline: none;
+        -webkit-appearance: none;
+        width: 100%;
+      }
+      .field input:focus,
+      .field select:focus,
+      .field textarea:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(200, 89, 58, 0.1);
+      }
+      .field textarea {
+        resize: none;
+        min-height: 88px;
+      }
+      .field select option {
+        background: #fff;
+      }
+      .field.required label::after {
+        content: " *";
+        color: var(--error);
+      }
+
+      /* CAMERA */
+      .camera-section {
+        display: flex;
+        gap: 18px;
+        align-items: flex-start;
+        flex-wrap: wrap;
+      }
+      .camera-col {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      @media (max-width: 480px) {
+        .camera-col {
+          width: 100%;
+        }
+      }
+      .camera-wrap {
+        background: var(--surface2);
+        border: 2px dashed var(--border);
+        border-radius: var(--radius);
+        overflow: hidden;
+        width: 200px;
+        height: 267px;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        cursor: pointer;
+        transition: border-color 0.2s;
+      }
+      @media (max-width: 480px) {
+        .camera-wrap {
+          width: 100%;
+          height: 220px;
+        }
+      }
+      .camera-wrap:active {
+        border-color: var(--accent);
+      }
+      .camera-wrap video,
+      .camera-wrap img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .camera-placeholder {
+        text-align: center;
+        padding: 20px;
+        color: var(--muted);
+        position: relative;
+        z-index: 1;
+      }
+      .camera-placeholder svg {
+        margin-bottom: 8px;
+        opacity: 0.35;
+      }
+      .camera-placeholder p {
+        font-size: 13px;
+        line-height: 1.5;
+      }
+      .camera-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 10px;
+        flex-wrap: wrap;
+      }
+      .camera-hints {
+        flex: 1;
+        min-width: 140px;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 2;
+      }
+      .camera-hints strong {
+        color: var(--text);
+        font-size: 13px;
+        font-weight: 700;
+        display: block;
+        margin-bottom: 4px;
+      }
+
+      /* SIGNATURE */
+      .sig-wrap {
+        background: #fff;
+        border-radius: var(--radius);
+        overflow: hidden;
+        border: 2px solid var(--border);
+      }
+      canvas#sigCanvas {
+        display: block;
+        touch-action: none;
+        cursor: crosshair;
+        width: 100%;
+      }
+      .sig-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 9px 14px;
+        background: var(--surface2);
+        border-top: 1px solid var(--border);
+      }
+      .sig-hint {
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      /* BUTTONS */
+      .btn {
+        padding: 13px 22px;
+        border-radius: var(--radius);
+        font-family: "Nunito Sans", sans-serif;
+        font-size: 15px;
+        font-weight: 700;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        -webkit-user-select: none;
+        user-select: none;
+        touch-action: manipulation;
+      }
+      .btn-primary {
+        background: var(--accent);
+        color: #fff;
+      }
+      .btn-primary:active {
+        background: var(--accent2);
+        transform: scale(0.97);
+      }
+      .btn-outline {
+        background: transparent;
+        border: 1.5px solid var(--border);
+        color: var(--text);
+      }
+      .btn-outline:active {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+      .btn-ghost {
+        background: var(--surface2);
+        color: var(--muted);
+      }
+      .btn-ghost:active {
+        color: var(--text);
+      }
+      .btn-sm {
+        padding: 9px 15px;
+        font-size: 13px;
+      }
+      .nav-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 28px;
+        padding-top: 20px;
+        border-top: 1px solid var(--border);
+        gap: 10px;
+      }
+      @media (max-width: 380px) {
+        .nav-row {
+          flex-direction: column;
+        }
+        .nav-row .btn {
+          width: 100%;
+        }
+      }
+
+      /* TOGGLE */
+      .badge-toggle {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .toggle-switch {
+        width: 50px;
+        height: 28px;
+        background: var(--border);
+        border-radius: 14px;
+        position: relative;
+        cursor: pointer;
+        transition: background 0.25s;
+        border: none;
+        outline: none;
+        flex-shrink: 0;
+      }
+      .toggle-switch.on {
+        background: var(--success);
+      }
+      .toggle-knob {
+        width: 22px;
+        height: 22px;
+        background: #fff;
+        border-radius: 50%;
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        transition: left 0.25s;
+        pointer-events: none;
+      }
+      .toggle-switch.on .toggle-knob {
+        left: 25px;
+      }
+
+      /* CONFIRM */
+      .confirm-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 20px;
+        margin-bottom: 18px;
+      }
+      .confirm-header {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 20px;
+        padding-bottom: 18px;
+        border-bottom: 1px solid var(--border);
+        flex-wrap: wrap;
+      }
+      .confirm-photo {
+        width: 68px;
+        height: 68px;
+        border-radius: 50%;
+        overflow: hidden;
+        background: var(--surface2);
+        border: 3px solid var(--accent);
+        flex-shrink: 0;
+      }
+      .confirm-photo img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .confirm-photo-placeholder {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 26px;
+      }
+      .confirm-name {
+        font-family: "Playfair Display", serif;
+        font-size: clamp(18px, 4vw, 24px);
+        color: var(--text);
+      }
+      .confirm-badge {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        background: rgba(200, 89, 58, 0.1);
+        color: var(--accent);
+        border: 1px solid rgba(200, 89, 58, 0.25);
+        margin-top: 4px;
+      }
+      .detail-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 14px;
+      }
+      @media (max-width: 500px) {
+        .detail-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      @media (max-width: 320px) {
+        .detail-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .detail-item label {
+        font-size: 10px;
+        font-weight: 700;
+        color: var(--muted);
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        margin-bottom: 2px;
+        display: block;
+      }
+      .detail-item span {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text);
+        word-break: break-word;
+      }
+
+      /* SUCCESS */
+      .success-screen {
+        text-align: center;
+        padding: 44px 12px 28px;
+      }
+      .success-icon {
+        font-size: 68px;
+        margin-bottom: 16px;
+        animation: pop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+      @keyframes pop {
+        from {
+          transform: scale(0);
+        }
+        to {
+          transform: scale(1);
+        }
+      }
+      .success-screen h2 {
+        font-family: "Playfair Display", serif;
+        font-size: clamp(26px, 5vw, 38px);
+        margin-bottom: 8px;
+        color: var(--text);
+      }
+      .success-screen > p {
+        color: var(--muted);
+        font-size: 15px;
+      }
+      .badge-print {
+        display: inline-block;
+        margin: 24px auto;
+        padding: 18px 32px;
+        border: 3px solid var(--accent);
+        border-radius: var(--radius);
+        background: linear-gradient(
+          135deg,
+          rgba(200, 89, 58, 0.04),
+          rgba(46, 90, 58, 0.04)
+        );
+        max-width: 100%;
+      }
+      .badge-print-name {
+        font-family: "Playfair Display", serif;
+        font-size: clamp(18px, 4vw, 24px);
+        margin-bottom: 4px;
+        color: var(--text);
+      }
+      .sync-status {
+        display: none;
+        font-size: 13px;
+        font-weight: 600;
+        padding: 10px 16px;
+        border-radius: var(--radius);
+        margin: 0 auto 18px;
+        max-width: 380px;
+        background: var(--surface2);
+        border: 1px solid var(--border);
+      }
+
+      /* LOG */
+      .log-table-wrap {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      .log-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 440px;
+      }
+      .log-table th {
+        padding: 10px 12px;
+        text-align: left;
+        font-size: 10px;
+        font-weight: 700;
+        color: var(--muted);
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        border-bottom: 1px solid var(--border);
+        background: var(--surface2);
+        white-space: nowrap;
+      }
+      .log-table td {
+        padding: 11px 12px;
+        font-size: 13px;
+        border-bottom: 1px solid rgba(224, 217, 207, 0.5);
+        color: var(--text);
+      }
+      .log-table tr:last-child td {
+        border-bottom: none;
+      }
+
+      /* ADMIN */
+      .admin-btn {
+        position: fixed;
+        bottom: 18px;
+        right: 18px;
+        z-index: 200;
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: var(--green);
+        border: none;
+        color: #fff;
+        font-size: 20px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 3px 10px rgba(46, 90, 58, 0.35);
+        transition: background 0.2s;
+      }
+      .admin-btn:active {
+        background: var(--green2);
+      }
+
+      /* MODAL */
+      /* ── POPUP OVERLAY ───────────────────────────────── */
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(26, 18, 8, 0.6);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        z-index: 300;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        opacity: 0;
+        transition: opacity 0.25s ease;
+      }
+      .overlay.show {
+        display: flex;
+        animation: overlayFadeIn 0.25s ease forwards;
+      }
+      @keyframes overlayFadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      /* ── POPUP MODAL ─────────────────────────────────── */
+      .modal {
+        background: var(--surface);
+        border-radius: 20px;
+        padding: 28px 24px 24px;
+        width: 100%;
+        max-width: 820px;
+        max-height: 85vh;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        box-shadow:
+          0 24px 60px rgba(26, 18, 8, 0.25),
+          0 4px 16px rgba(26, 18, 8, 0.1);
+        animation: popupIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        position: relative;
+      }
+      @keyframes popupIn {
+        from {
+          transform: scale(0.92) translateY(12px);
+          opacity: 0;
+        }
+        to {
+          transform: scale(1) translateY(0);
+          opacity: 1;
+        }
+      }
+      @keyframes popupOut {
+        from {
+          transform: scale(1) translateY(0);
+          opacity: 1;
+        }
+        to {
+          transform: scale(0.94) translateY(8px);
+          opacity: 0;
+        }
+      }
+      @keyframes overlayFadeOut {
+        from {
+          opacity: 1;
+        }
+        to {
+          opacity: 0;
+        }
+      }
+
+      /* Close button — top right corner */
+      .modal-close {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: none;
+        background: var(--surface2);
+        color: var(--muted);
+        font-size: 16px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition:
+          background 0.2s,
+          color 0.2s;
+        flex-shrink: 0;
+      }
+      .modal-close:hover {
+        background: var(--border);
+        color: var(--text);
+      }
+
+      .modal-handle {
+        display: none;
+      } /* hide the bottom-sheet handle */
+      .modal h2 {
+        font-family: "Playfair Display", serif;
+        font-size: 22px;
+        margin-bottom: 4px;
+        color: var(--text);
+        padding-right: 40px;
+      }
+
+      /* TOAST */
+      .toast {
+        position: fixed;
+        top: 16px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--green);
+        color: #fff;
+        padding: 10px 20px;
+        border-radius: 100px;
+        font-weight: 700;
+        font-size: 13px;
+        z-index: 500;
+        opacity: 0;
+        transition: opacity 0.3s;
+        white-space: nowrap;
+        max-width: 90vw;
+        text-align: center;
+        box-shadow: 0 4px 12px rgba(46, 90, 58, 0.3);
+      }
+      .toast.show {
+        opacity: 1;
+      }
+
+      /* FOOTER */
+      footer {
+        text-align: center;
+        padding: 18px 16px;
+        border-top: 1px solid var(--border);
+        background: var(--surface);
+      }
+      footer span {
+        font-family: "Playfair Display", serif;
+        font-size: 12px;
+        color: var(--muted);
+      }
+      footer span b {
+        color: var(--accent);
+        font-weight: 400;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="toast" id="toast"></div>
+
+    <!-- HEADER -->
+    <header class="header">
+      <div class="logo">
+        <div class="logo-icon">👗</div>
+        <div>
+          <div class="logo-text">Vivo Fashion Group</div>
+          <div class="logo-sub">Visitor Management</div>
+        </div>
+      </div>
+      <div class="clock">
+        <div class="clock-time" id="clockTime">--:--</div>
+        <div class="clock-date" id="clockDate"></div>
+      </div>
+    </header>
+
+    <!-- STEPS -->
+    <div class="steps-bar" id="stepsBar">
+      <div class="step active" id="step1">
+        <div class="step-num">1</div>
+        <span>Purpose</span>
+      </div>
+      <div class="step-line"></div>
+      <div class="step" id="step2">
+        <div class="step-num">2</div>
+        <span>Identity</span>
+      </div>
+      <div class="step-line"></div>
+      <div class="step" id="step3">
+        <div class="step-num">3</div>
+        <span>Visit Info</span>
+      </div>
+      <div class="step-line"></div>
+      <div class="step" id="step4">
+        <div class="step-num">4</div>
+        <span>Photo &amp; Sign</span>
+      </div>
+      <div class="step-line"></div>
+      <div class="step" id="step5">
+        <div class="step-num">5</div>
+        <span>Confirm</span>
+      </div>
+    </div>
+
+    <main class="main">
+      <!-- PAGE 1: PURPOSE -->
+      <div class="page active" id="page1">
+        <div class="welcome-hero">
+          <h1>Welcome to<br /><span>Vivo Fashion Group.</span></h1>
+          <p>Please check in by selecting the purpose of your visit below.</p>
+        </div>
+        <div class="visit-type-grid">
+          <div class="visit-card" onclick="selectVisitType(this, 'Meeting')">
+            <div class="visit-card-icon">🤝</div>
+            <div class="visit-card-label">Meeting</div>
+            <div class="visit-card-desc">Scheduled or walk-in</div>
+          </div>
+          <div class="visit-card" onclick="selectVisitType(this, 'Delivery')">
+            <div class="visit-card-icon">📦</div>
+            <div class="visit-card-label">Delivery</div>
+            <div class="visit-card-desc">Parcel or document</div>
+          </div>
+          <div class="visit-card" onclick="selectVisitType(this, 'Interview')">
+            <div class="visit-card-icon">💼</div>
+            <div class="visit-card-label">Interview</div>
+            <div class="visit-card-desc">Job or vendor</div>
+          </div>
+          <div
+            class="visit-card"
+            onclick="selectVisitType(this, 'Contractor / Service Provider')"
+          >
+            <div class="visit-card-icon">🔧</div>
+            <div class="visit-card-label">Contractor / Service Provider</div>
+            <div class="visit-card-desc">Repairs or technical</div>
+          </div>
+          <div class="visit-card" onclick="selectVisitType(this, 'Event')">
+            <div class="visit-card-icon">🎉</div>
+            <div class="visit-card-label">Event</div>
+            <div class="visit-card-desc">Seminar or workshop</div>
+          </div>
+          <div class="visit-card" onclick="selectVisitType(this, 'Consultant')">
+            <div class="visit-card-icon">📊</div>
+            <div class="visit-card-label">Consultant</div>
+            <div class="visit-card-desc">Advisory or specialist</div>
+          </div>
+          <div class="visit-card" onclick="selectVisitType(this, 'Employee')">
+            <div class="visit-card-icon">🏢</div>
+            <div class="visit-card-label">Employee</div>
+            <div class="visit-card-desc">Staff or internal visit</div>
+          </div>
+          <div class="visit-card" onclick="selectVisitType(this, 'Other')">
+            <div class="visit-card-icon">💬</div>
+            <div class="visit-card-label">Other</div>
+            <div class="visit-card-desc">Something else</div>
+          </div>
+
+          <!-- CHECKOUT CARD — full width, below the grid -->
+          <div class="checkout-card" onclick="showCheckOut()">
+            <div class="checkout-card-inner">
+              <div class="checkout-card-icon">🚪</div>
+              <div class="checkout-card-text">
+                <div class="checkout-card-label">Check Out</div>
+                <div class="checkout-card-desc">Record your departure</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="nav-row" style="justify-content: flex-end">
+          <button class="btn btn-primary" onclick="goTo(2)">Continue →</button>
+        </div>
+      </div>
+
+      <!-- PAGE 2: IDENTITY -->
+      <div class="page" id="page2">
+        <div class="form-section">
+          <div class="section-title">
+            Your Details <span class="section-tag">Personal</span>
+          </div>
+          <div class="form-grid">
+            <div class="field required">
+              <label>Full Name</label>
+              <input
+                type="text"
+                id="fullName"
+                placeholder="e.g. Jane Kamau"
+                autocomplete="off"
+                autocorrect="off"
+                spellcheck="false"
+              />
+            </div>
+            <div class="field required">
+              <label>Phone Number</label>
+              <input
+                type="tel"
+                id="phone"
+                placeholder="e.g. +254 712 345 678"
+                autocomplete="off"
+              />
+            </div>
+            <div class="field required">
+              <label>National ID / Passport No.</label>
+              <input
+                type="text"
+                id="idNumber"
+                placeholder="e.g. 12345678"
+                autocomplete="off"
+                inputmode="numeric"
+              />
+            </div>
+            <div class="field">
+              <label>Email Address</label>
+              <input
+                type="email"
+                id="email"
+                placeholder="e.g. jane@company.com"
+                autocomplete="off"
+                inputmode="email"
+              />
+            </div>
+            <div class="field">
+              <label>Organisation / Company</label>
+              <input
+                type="text"
+                id="company"
+                placeholder="e.g. Acme Ltd"
+                autocomplete="off"
+              />
+            </div>
+            <div class="field">
+              <label>Vehicle Registration</label>
+              <input
+                type="text"
+                id="vehicle"
+                placeholder="e.g. KBC 123A"
+                autocomplete="off"
+                autocapitalize="characters"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="nav-row">
+          <button class="btn btn-outline" onclick="goTo(1)">← Back</button>
+          <button class="btn btn-primary" onclick="goTo(3)">Continue →</button>
+        </div>
+      </div>
+
+      <!-- PAGE 3: VISIT INFO -->
+      <div class="page" id="page3">
+        <div class="form-section">
+          <div class="section-title">
+            Visit Information <span class="section-tag">Details</span>
+          </div>
+          <div class="form-grid full">
+            <div class="field required">
+              <label>Purpose / Description</label>
+              <input
+                type="text"
+                id="purposeDetail"
+                placeholder="e.g. Q3 Budget Review with Finance"
+                autocomplete="off"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="form-section">
+          <div class="section-title">
+            Host Information <span class="section-tag">Host</span>
+          </div>
+          <div class="host-row">
+            <div class="field required" style="position: relative">
+              <label>Who are you here to see?</label>
+              <input
+                type="text"
+                id="hostSearch"
+                placeholder="Start typing an employee's name…"
+                autocomplete="off"
+              />
+              <input type="hidden" id="hostName" />
+              <input type="hidden" id="hostUserId" />
+              <div
+                id="hostResults"
+                style="
+                  display: none;
+                  position: absolute;
+                  z-index: 20;
+                  left: 0;
+                  right: 0;
+                  background: #fff;
+                  border: 1px solid #d9d3c7;
+                  border-radius: 8px;
+                  margin-top: 4px;
+                  max-height: 220px;
+                  overflow-y: auto;
+                  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+                "
+              ></div>
+            </div>
+            <div class="field">
+              <label>Host Department</label>
+              <input
+                type="text"
+                id="hostDept"
+                placeholder="e.g. Finance"
+                autocomplete="off"
+              />
+            </div>
+            <div class="field">
+              <label>Host Extension / Phone</label>
+              <input
+                type="text"
+                id="hostPhone"
+                placeholder="e.g. Ext. 204"
+                autocomplete="off"
+                inputmode="tel"
+              />
+            </div>
+          </div>
+        </div>
+        <!-- Check-in time — defaults to now, editable for backdating walk-in visitors -->
+        <div class="form-section">
+          <div class="section-title">
+            Check-in Time <span class="section-tag">Optional</span>
+          </div>
+          <div
+            style="
+              display: flex;
+              align-items: center;
+              gap: 12px;
+              flex-wrap: wrap;
+            "
+          >
+            <div class="field" style="max-width: 260px; margin-bottom: 0">
+              <label>Arrival Time</label>
+              <input
+                type="datetime-local"
+                id="checkInTime"
+                autocomplete="off"
+                style="font-size: 15px"
+                title="Leave as-is to use the current time, or edit if registering a visitor who arrived earlier"
+              />
+            </div>
+            <button
+              type="button"
+              onclick="resetCheckInTime()"
+              style="
+                margin-top: 18px;
+                padding: 8px 14px;
+                border: 1.5px solid var(--border);
+                border-radius: var(--radius);
+                background: #fff;
+                font-family: &quot;Nunito Sans&quot;, sans-serif;
+                font-size: 12px;
+                color: var(--muted);
+                cursor: pointer;
+              "
+            >
+              Reset to Now
+            </button>
+          </div>
+          <div style="font-size: 11px; color: var(--muted); margin-top: 6px">
+            Defaults to current time. Edit only if registering a visitor who
+            arrived earlier (e.g. from visitor book).
+          </div>
+        </div>
+        <div class="nav-row">
+          <button class="btn btn-outline" onclick="goTo(2)">← Back</button>
+          <button class="btn btn-primary" onclick="goTo(4)">Continue →</button>
+        </div>
+      </div>
+
+      <!-- PAGE 4: PHOTO & SIGNATURE -->
+      <div class="page" id="page4">
+        <div class="form-section">
+          <div class="section-title">
+            Photo Capture <span class="section-tag">Required</span>
+          </div>
+          <div class="camera-section">
+            <div class="camera-col">
+              <div class="camera-wrap" id="cameraWrap" onclick="startCamera()">
+                <video
+                  id="cameraVideo"
+                  autoplay
+                  playsinline
+                  style="display: none"
+                ></video>
+                <canvas id="photoCanvas" style="display: none"></canvas>
+                <img
+                  id="capturedPhoto"
+                  style="display: none"
+                  alt="Visitor photo"
+                />
+                <div class="camera-placeholder" id="cameraPlaceholder">
+                  <svg
+                    width="44"
+                    height="44"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                  >
+                    <path
+                      d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"
+                    />
+                    <circle cx="12" cy="13" r="4" />
+                  </svg>
+                  <p>Tap to activate<br />camera</p>
+                </div>
+              </div>
+              <div
+                class="camera-actions"
+                id="cameraActions"
+                style="display: none"
+              >
+                <button class="btn btn-primary btn-sm" onclick="capturePhoto()">
+                  📸 Capture
+                </button>
+                <button class="btn btn-ghost btn-sm" onclick="retakePhoto()">
+                  ↺ Retake
+                </button>
+              </div>
+              <div id="photoTaken" style="display: none; margin-top: 10px">
+                <button class="btn btn-outline btn-sm" onclick="retakePhoto()">
+                  ↺ Retake Photo
+                </button>
+              </div>
+            </div>
+            <div class="camera-hints">
+              <strong>📋 Photo Guidelines</strong>
+              • Face the camera directly<br />
+              • Ensure good lighting<br />
+              • Remove sunglasses / hats<br />
+              • Photo stored securely<br />
+              <span style="font-size: 11px; display: block; margin-top: 8px"
+                >Captured for security purposes per our privacy policy.</span
+              >
+            </div>
+          </div>
+        </div>
+        <div class="form-section">
+          <div class="section-title">
+            Electronic Signature <span class="section-tag">Agreement</span>
+          </div>
+          <p
+            style="
+              color: var(--muted);
+              font-size: 14px;
+              margin-bottom: 16px;
+              line-height: 1.7;
+            "
+          >
+            By signing, I confirm that I agree to abide by the premises rules,
+            health &amp; safety policies, and data protection terms. My details
+            will be retained for security purposes.
+          </p>
+          <div class="badge-toggle" style="margin-bottom: 16px">
+            <button class="toggle-switch" id="sigToggle" onclick="toggleSig()">
+              <div class="toggle-knob"></div>
+            </button>
+            <span
+              id="sigToggleLabel"
+              style="font-size: 14px; color: var(--muted)"
+              >I consent to signing electronically</span
+            >
+          </div>
+          <div id="sigSection" style="display: none">
+            <div class="sig-wrap">
+              <canvas id="sigCanvas" height="150"></canvas>
+              <div class="sig-footer">
+                <span class="sig-hint">✍️ Sign with your finger or stylus</span>
+                <button class="btn btn-ghost btn-sm" onclick="clearSig()">
+                  Clear
+                </button>
+              </div>
+            </div>
+          </div>
+          <div
+            id="sigDeclined"
+            style="
+              display: none;
+              color: var(--muted);
+              font-size: 13px;
+              padding: 13px;
+              background: var(--surface2);
+              border-radius: var(--radius);
+            "
+          >
+            ⚠️ Visitor has declined electronic signature. A physical signature
+            may be required at reception.
+          </div>
+        </div>
+        <div class="nav-row">
+          <button class="btn btn-outline" onclick="goTo(3)">← Back</button>
+          <button class="btn btn-primary" onclick="goTo(5)">
+            Review &amp; Confirm →
+          </button>
+        </div>
+      </div>
+
+      <!-- PAGE 5: CONFIRM -->
+      <div class="page" id="page5">
+        <div class="section-title" style="margin-bottom: 18px">
+          Review Your Details <span class="section-tag">Confirm</span>
+        </div>
+        <div class="confirm-card">
+          <div class="confirm-header">
+            <div class="confirm-photo">
+              <img id="confirmPhoto" src="" alt="" style="display: none" />
+              <div
+                class="confirm-photo-placeholder"
+                id="confirmPhotoPlaceholder"
+              >
+                👤
+              </div>
+            </div>
+            <div>
+              <div class="confirm-name" id="confirmName">—</div>
+              <div class="confirm-badge" id="confirmBadge">—</div>
+              <div
+                style="font-size: 11px; color: var(--muted); margin-top: 4px"
+                id="confirmTime"
+              >
+                —
+              </div>
+            </div>
+          </div>
+          <div class="detail-grid" id="confirmDetails"></div>
+        </div>
+        <div class="nav-row">
+          <button class="btn btn-outline" onclick="goTo(4)">← Edit</button>
+          <button
+            class="btn btn-primary"
+            onclick="submitVisitor()"
+            style="font-size: 16px; padding: 15px 34px"
+          >
+            ✔ Check In
+          </button>
+        </div>
+      </div>
+
+      <!-- PAGE 6: SUCCESS -->
+      <div class="page" id="page6">
+        <div class="success-screen">
+          <div class="success-icon">✅</div>
+          <h2>You're checked in!</h2>
+          <p>
+            Welcome to Vivo Fashion Group.<br />Please proceed to reception.
+          </p>
+          <div class="badge-print">
+            <div
+              style="
+                font-size: 10px;
+                font-weight: 700;
+                letter-spacing: 2px;
+                color: var(--muted);
+                text-transform: uppercase;
+                margin-bottom: 8px;
+              "
+            >
+              Visitor Pass
+            </div>
+            <div class="badge-print-name" id="badgeName">—</div>
+            <div
+              style="font-size: 13px; color: var(--muted); margin-top: 4px"
+              id="badgeInfo"
+            >
+              —
+            </div>
+            <div
+              style="
+                font-size: 12px;
+                color: var(--accent);
+                margin-top: 10px;
+                font-weight: 700;
+              "
+              id="badgeTime"
+            >
+              —
+            </div>
+          </div>
+          <div class="sync-status" id="syncStatus"></div>
+          <div
+            style="
+              display: flex;
+              gap: 10px;
+              justify-content: center;
+              flex-wrap: wrap;
+            "
+          >
+            <button class="btn btn-outline" onclick="newVisitor()">
+              + New Visitor
+            </button>
+            <button class="btn btn-ghost" onclick="showCheckOut()">
+              🚪 Check Out
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- LOG MODAL -->
+    <div class="overlay" id="logOverlay" onclick="closeLogOnBg(event)">
+      <div class="modal" id="logModal">
+        <button class="modal-close" onclick="closeLog()" title="Close">
+          ✕
+        </button>
+        <div class="modal-handle"></div>
+        <div
+          style="
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 4px;
+          "
+        >
+          <h2 style="margin: 0">Today's Visitor Log</h2>
+          <button
+            class="btn btn-ghost btn-sm"
+            onclick="showLog()"
+            title="Refresh"
+            style="margin-right: 40px"
+          >
+            🔄 Refresh
+          </button>
+        </div>
+        <div
+          id="logCount"
+          style="font-size: 12px; color: var(--muted); margin-bottom: 12px"
+        ></div>
+        <div
+          id="logLoading"
+          style="
+            color: var(--muted);
+            font-size: 14px;
+            padding: 10px 0;
+            display: none;
+          "
+        >
+          🔄 Loading visitors…
+        </div>
+        <div class="log-table-wrap"><div id="logContent"></div></div>
+        <div
+          style="
+            margin-top: 18px;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+          "
+        >
+          <button class="btn btn-ghost btn-sm" onclick="exportCSVFromDB()">
+            ⬇ Export CSV
+          </button>
+          <button class="btn btn-outline btn-sm" onclick="closeLog()">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <button class="admin-btn" onclick="showLog()" title="View log">📋</button>
+
+    <!-- CHECKOUT MODAL -->
+    <div
+      class="overlay"
+      id="checkOutOverlay"
+      onclick="closeCheckOutOnBg(event)"
+    >
+      <div class="modal" id="checkOutModal">
+        <button class="modal-close" onclick="closeCheckOut()" title="Close">
+          ✕
+        </button>
+        <div class="modal-handle"></div>
+        <div style="margin-bottom: 4px">
+          <h2 style="margin: 0">🚪 Visitor Check Out</h2>
+        </div>
+        <div
+          id="checkOutSubtitle"
+          style="font-size: 12px; color: var(--muted); margin-bottom: 14px"
+        ></div>
+        <div
+          id="checkOutLoading"
+          style="
+            color: var(--muted);
+            font-size: 14px;
+            padding: 10px 0;
+            display: none;
+          "
+        >
+          🔄 Loading active visitors…
+        </div>
+        <div id="checkOutContent"></div>
+        <div
+          style="
+            margin-top: 18px;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+          "
+        >
+          <button class="btn btn-outline btn-sm" onclick="closeCheckOut()">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <span
+        ><b>Vivo Fashion Group</b> &nbsp;·&nbsp; Africa Dressing the World
+        🌍</span
+      >
+    </footer>
+
+    <script>
+      // ══════════════════════════════════════════════════════
+      //  CONFIGURATION
+      // ══════════════════════════════════════════════════════
+      const API_BASE = ""; // same-origin: served by the backend
+
+      // ── STATE ─────────────────────────────────────────────
+      let form = {};
+      let stream = null;
+      let sigCtx,
+        sigDrawing = false,
+        sigHasData = false;
+      let currentStep = 1;
+      let localVisitors = [];
+
+      // ── CLOCK ─────────────────────────────────────────────
+      function updateClock() {
+        const now = new Date();
+        document.getElementById("clockTime").textContent =
+          now.toLocaleTimeString("en-KE", {
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+        document.getElementById("clockDate").textContent =
+          now.toLocaleDateString("en-KE", {
+            weekday: "short",
+            day: "numeric",
+            month: "short",
+            year: "numeric",
+          });
+      }
+      setInterval(updateClock, 1000);
+      updateClock();
+
+      // ── NAVIGATION ────────────────────────────────────────
+      function goTo(n) {
+        if (n > currentStep && !validateStep(currentStep)) return;
+        document
+          .querySelectorAll(".page")
+          .forEach((p) => p.classList.remove("active"));
+        document.getElementById("page" + n).classList.add("active");
+        for (let i = 1; i <= 5; i++) {
+          const s = document.getElementById("step" + i);
+          s.classList.remove("active", "done");
+          if (i < n) s.classList.add("done");
+          else if (i === n) s.classList.add("active");
+        }
+        // Auto-set check-in time to now when page 3 is first opened
+        if (n === 3) {
+          const field = document.getElementById("checkInTime");
+          if (field && !field.value) resetCheckInTime();
+        }
+        if (n === 5) populateConfirm();
+        currentStep = n;
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      // Set check-in time field to current local datetime
+      function resetCheckInTime() {
+        const field = document.getElementById("checkInTime");
+        if (!field) return;
+        const now = new Date();
+        // Format as YYYY-MM-DDTHH:MM (required by datetime-local input)
+        const local = new Date(now.getTime() - now.getTimezoneOffset() * 60000)
+          .toISOString()
+          .slice(0, 16);
+        field.value = local;
+      }
+
+      function validateStep(n) {
+        if (n === 1 && !form.visitType) {
+          toast("Please select a visit type");
+          return false;
+        }
+        if (n === 2) {
+          if (!g("fullName")) {
+            toast("Please enter your full name");
+            return false;
+          }
+          if (!g("phone")) {
+            toast("Please enter your phone number");
+            return false;
+          }
+          if (!g("idNumber")) {
+            toast("Please enter your ID / Passport number");
+            return false;
+          }
+        }
+        if (n === 3) {
+          if (!g("purposeDetail")) {
+            toast("Please describe your visit");
+            return false;
+          }
+          if (!g("hostName")) {
+            toast("Please enter the host name");
+            return false;
+          }
+        }
+        return true;
+      }
+
+      function g(id) {
+        return document.getElementById(id)?.value?.trim() || "";
+      }
+
+      // ── VISIT TYPE ────────────────────────────────────────
+      function selectVisitType(el, type) {
+        document
+          .querySelectorAll(".visit-card")
+          .forEach((c) => c.classList.remove("selected"));
+        el.classList.add("selected");
+        form.visitType = type;
+      }
+
+      // ── CAMERA ────────────────────────────────────────────
+      async function startCamera() {
+        if (form.photoData) return;
+        try {
+          stream = await navigator.mediaDevices.getUserMedia({
+            video: {
+              facingMode: "user",
+              width: { ideal: 640 },
+              height: { ideal: 853 },
+            },
+          });
+          const vid = document.getElementById("cameraVideo");
+          vid.srcObject = stream;
+          vid.style.display = "block";
+          document.getElementById("cameraPlaceholder").style.display = "none";
+          document.getElementById("cameraActions").style.display = "flex";
+        } catch (e) {
+          toast("Camera unavailable — check browser permissions");
+        }
+      }
+
+      function capturePhoto() {
+        const video = document.getElementById("cameraVideo");
+        const canvas = document.getElementById("photoCanvas");
+        canvas.width = video.videoWidth || 640;
+        canvas.height = video.videoHeight || 853;
+        canvas.getContext("2d").drawImage(video, 0, 0);
+        form.photoData = canvas.toDataURL("image/jpeg", 0.85);
+        const img = document.getElementById("capturedPhoto");
+        img.src = form.photoData;
+        img.style.display = "block";
+        video.style.display = "none";
+        document.getElementById("cameraActions").style.display = "none";
+        document.getElementById("photoTaken").style.display = "block";
+        if (stream) stream.getTracks().forEach((t) => t.stop());
+        toast("Photo captured ✓");
+      }
+
+      function retakePhoto() {
+        form.photoData = null;
+        document.getElementById("capturedPhoto").style.display = "none";
+        document.getElementById("cameraPlaceholder").style.display = "flex";
+        document.getElementById("photoTaken").style.display = "none";
+        startCamera();
+      }
+
+      // ── SIGNATURE ─────────────────────────────────────────
+      function toggleSig() {
+        const t = document.getElementById("sigToggle");
+        const on = !t.classList.contains("on");
+        t.classList.toggle("on", on);
+        form.sigConsent = on;
+        document.getElementById("sigSection").style.display = on
+          ? "block"
+          : "none";
+        document.getElementById("sigDeclined").style.display = on
+          ? "none"
+          : "block";
+        document.getElementById("sigToggleLabel").textContent = on
+          ? "✔ Consent given"
+          : "I consent to signing electronically";
+        if (on) initSig();
+      }
+
+      function initSig() {
+        const canvas = document.getElementById("sigCanvas");
+        canvas.width = canvas.parentElement.clientWidth - 4;
+        canvas.height = 150;
+        sigCtx = canvas.getContext("2d");
+        sigCtx.strokeStyle = "#1a1208";
+        sigCtx.lineWidth = 2.5;
+        sigCtx.lineCap = "round";
+        sigCtx.lineJoin = "round";
+        const pos = (e) => {
+          const r = canvas.getBoundingClientRect();
+          const pt = e.touches ? e.touches[0] : e;
+          return {
+            x: (pt.clientX - r.left) * (canvas.width / r.width),
+            y: (pt.clientY - r.top) * (canvas.height / r.height),
+          };
+        };
+        canvas.onmousedown = canvas.ontouchstart = (e) => {
+          e.preventDefault();
+          sigDrawing = true;
+          const p = pos(e);
+          sigCtx.beginPath();
+          sigCtx.moveTo(p.x, p.y);
+        };
+        canvas.onmousemove = canvas.ontouchmove = (e) => {
+          e.preventDefault();
+          if (!sigDrawing) return;
+          const p = pos(e);
+          sigCtx.lineTo(p.x, p.y);
+          sigCtx.stroke();
+          sigHasData = true;
+        };
+        canvas.onmouseup = canvas.ontouchend = () => {
+          sigDrawing = false;
+          sigCtx.beginPath();
+          if (sigHasData) form.sigData = canvas.toDataURL();
+        };
+      }
+
+      function clearSig() {
+        sigCtx.clearRect(0, 0, document.getElementById("sigCanvas").width, 150);
+        sigHasData = false;
+        form.sigData = null;
+      }
+
+      // ── CONFIRM ───────────────────────────────────────────
+      function populateConfirm() {
+        Object.assign(form, {
+          fullName: g("fullName"),
+          phone: g("phone"),
+          idNumber: g("idNumber"),
+          email: g("email"),
+          company: g("company"),
+          vehicle: g("vehicle"),
+          purposeDetail: g("purposeDetail"),
+          hostName: g("hostName"),
+          hostUserId: g("hostUserId") || null,
+          hostDept: g("hostDept"),
+          hostPhone: g("hostPhone"),
+          timestamp: new Date().toISOString(),
+        });
+        document.getElementById("confirmName").textContent =
+          form.fullName || "—";
+        document.getElementById("confirmBadge").textContent =
+          form.visitType || "—";
+        document.getElementById("confirmTime").textContent =
+          new Date().toLocaleString("en-KE");
+        if (form.photoData) {
+          document.getElementById("confirmPhoto").src = form.photoData;
+          document.getElementById("confirmPhoto").style.display = "block";
+          document.getElementById("confirmPhotoPlaceholder").style.display =
+            "none";
+        }
+        document.getElementById("confirmDetails").innerHTML = [
+          { l: "Phone", v: form.phone },
+          { l: "ID / Passport", v: form.idNumber },
+          { l: "Email", v: form.email },
+          { l: "Organisation", v: form.company },
+          { l: "Vehicle", v: form.vehicle },
+          { l: "Host", v: form.hostName },
+          { l: "Department", v: form.hostDept },
+          { l: "Purpose", v: form.purposeDetail },
+          { l: "Signature", v: form.sigData ? "✔ Signed" : "✗ Declined" },
+        ]
+          .map(
+            (d) =>
+              `<div class="detail-item"><label>${d.l}</label><span>${d.v || "—"}</span></div>`,
+          )
+          .join("");
+      }
+
+      // ── SUBMIT ────────────────────────────────────────────
+      async function submitVisitor() {
+        // Read custom check-in time if set, otherwise use now
+        const checkInField = document.getElementById("checkInTime");
+        const customTime =
+          checkInField && checkInField.value
+            ? new Date(checkInField.value).toISOString()
+            : null;
+
+        form.checkIn = customTime || new Date().toISOString();
+        form.id = Date.now();
+
+        // Show badge time — use the actual check-in time
+        const displayTime = new Date(form.checkIn);
+        document.getElementById("badgeName").textContent = form.fullName;
+        document.getElementById("badgeInfo").textContent =
+          (form.visitType || "") +
+          (form.company ? " · " + form.company : "") +
+          (form.hostName ? " → " + form.hostName : "");
+        document.getElementById("badgeTime").textContent =
+          "⏰ " + displayTime.toLocaleString("en-KE");
+        document
+          .querySelectorAll(".page")
+          .forEach((p) => p.classList.remove("active"));
+        document.getElementById("page6").classList.add("active");
+        document.getElementById("stepsBar").style.display = "none";
+        if (stream) stream.getTracks().forEach((t) => t.stop());
+
+        showSync("syncing", "🔄 Syncing with server...");
+
+        fetch(`${API_BASE}/api/visitors`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            ...form,
+            photoData: form.photoData || null,
+            sigData: form.sigData || null,
+            checkInTime: customTime || null, // send custom time to backend
+          }),
+        })
+          .then((res) => {
+            if (!res.ok) throw new Error("Server error " + res.status);
+            return res.json();
+          })
+          .then((data) => {
+            if (data.success) {
+              showSync("success", "✅ Visitor saved successfully");
+            } else {
+              showSync("error", "⚠️ Partial save — check logs");
+            }
+          })
+          .catch((err) => {
+            console.error("Submission error:", err);
+            showSync("error", "❌ Could not reach server — data saved locally");
+          });
+      }
+
+      // sendViaForm: legacy Google Apps Script method — no longer used
+      function sendViaForm(f) {
+        console.warn(
+          "sendViaForm called but deprecated — use fetch API instead",
+        );
+      }
+
+      function showSync(type, msg) {
+        const el = document.getElementById("syncStatus");
+        const colors = {
+          syncing: "#8a7e72",
+          success: "#2e5a3a",
+          error: "#c8593a",
+          warning: "#a0401f",
+        };
+        el.style.color = colors[type] || "#8a7e72";
+        el.textContent = msg;
+        el.style.display = "block";
+      }
+
+      // ── RETRY QUEUE ───────────────────────────────────────
+      function queueForRetry(paramsString) {
+        const q = JSON.parse(localStorage.getItem("vl_queue") || "[]");
+        q.push(paramsString);
+        localStorage.setItem("vl_queue", JSON.stringify(q));
+      }
+
+      async function retryQueue() {
+        const q = JSON.parse(localStorage.getItem("vl_queue") || "[]");
+        if (!q.length) return;
+        const remaining = [];
+        for (const p of q) {
+          try {
+            const data = JSON.parse(p);
+            const res = await fetch(`${API_BASE}/api/visitors`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(data),
+            });
+            if (!res.ok) remaining.push(p);
+          } catch {
+            remaining.push(p);
+          }
+        }
+        localStorage.setItem("vl_queue", JSON.stringify(remaining));
+        if (remaining.length < q.length)
+          toast(`✅ ${q.length - remaining.length} queued record(s) synced`);
+      }
+      retryQueue();
+
+      // ── HOST PICKER — search invited employees ────────────
+      (function initHostPicker() {
+        const searchEl = document.getElementById("hostSearch");
+        const resultsEl = document.getElementById("hostResults");
+        if (!searchEl) return;
+        let timer;
+
+        function clearSelection() {
+          document.getElementById("hostName").value = "";
+          document.getElementById("hostUserId").value = "";
+        }
+
+        function render(list) {
+          if (!list.length) {
+            resultsEl.style.display = "none";
+            resultsEl.innerHTML = "";
+            return;
+          }
+          resultsEl.innerHTML = list
+            .map((u) => {
+              const dept = u.department ? " · " + u.department : "";
+              const name = String(u.name).replace(/"/g, "&quot;");
+              return `<div class="host-opt" data-id="${u.id}" data-name="${name}" data-dept="${(u.department || "").replace(/"/g, "&quot;")}" style="padding:10px 12px;cursor:pointer;border-bottom:1px solid #f0ece2;">${u.name}<span style="color:#9a9384;">${dept}</span></div>`;
+            })
+            .join("");
+          resultsEl.style.display = "block";
+          resultsEl.querySelectorAll(".host-opt").forEach((el) => {
+            el.onmousedown = (e) => {
+              e.preventDefault();
+              searchEl.value = el.dataset.name;
+              document.getElementById("hostName").value = el.dataset.name;
+              document.getElementById("hostUserId").value = el.dataset.id;
+              const deptEl = document.getElementById("hostDept");
+              if (deptEl && el.dataset.dept) deptEl.value = el.dataset.dept;
+              resultsEl.style.display = "none";
+            };
+          });
+        }
+
+        searchEl.addEventListener("input", () => {
+          const q = searchEl.value.trim();
+          clearSelection();
+          clearTimeout(timer);
+          if (q.length < 2) {
+            render([]);
+            return;
+          }
+          timer = setTimeout(async () => {
+            try {
+              const res = await fetch(
+                `${API_BASE}/api/staff/directory?q=${encodeURIComponent(q)}`,
+              );
+              render(await res.json());
+            } catch {
+              render([]);
+            }
+          }, 200);
+        });
+
+        searchEl.addEventListener("blur", () =>
+          setTimeout(() => (resultsEl.style.display = "none"), 150),
+        );
+      })();
+
+      // ── LOG — fetch from Apps Script ──────────────────────
+      async function showLog() {
+        document.getElementById("logOverlay").classList.add("show");
+        const loading = document.getElementById("logLoading");
+        const content = document.getElementById("logContent");
+        const countEl = document.getElementById("logCount");
+        content.innerHTML = "";
+        countEl.textContent = "";
+
+        loading.style.display = "block";
+        try {
+          const res = await fetch(
+            `${API_BASE}/api/visitors/today?_=${Date.now()}`,
+          ); // cache-busting
+          if (!res.ok) throw new Error("Server returned " + res.status);
+          const rows = await res.json();
+          loading.style.display = "none";
+          if (rows.length) {
+            countEl.textContent = `${rows.length} visitor${rows.length !== 1 ? "s" : ""} today`;
+            renderLogTable(content, rows);
+          } else {
+            countEl.textContent = "";
+            content.innerHTML =
+              '<p style="color:var(--muted);padding:14px 0;">No visitors today yet.</p>';
+          }
+        } catch (err) {
+          loading.style.display = "none";
+          content.innerHTML =
+            '<p style="color:var(--muted);padding:14px 0;">Could not load visitor log — check your connection.</p>';
+          console.error("showLog error:", err);
+        }
+      }
+
+      function renderLogTable(container, rows) {
+        let html = `<table class="log-table"><thead><tr>
+    <th>#</th><th>Name</th><th>Company</th><th>Type</th><th>Purpose</th><th>Host</th><th>Time In</th><th>Time Out</th><th>Duration</th><th>Photo</th><th>Action</th>
+  </tr></thead><tbody>`;
+        rows.forEach((r, i) => {
+          const timeIn = r.check_in
+            ? new Date(r.check_in).toLocaleTimeString("en-KE", {
+                hour: "2-digit",
+                minute: "2-digit",
+              })
+            : "—";
+
+          const timeOut = r.check_out
+            ? new Date(r.check_out).toLocaleTimeString("en-KE", {
+                hour: "2-digit",
+                minute: "2-digit",
+              })
+            : '<span style="color:#2e8b57;font-weight:700;">● Active</span>';
+
+          // Calculate duration if both times exist
+          let duration = "—";
+          if (r.check_in && r.check_out) {
+            const mins = Math.round(
+              (new Date(r.check_out) - new Date(r.check_in)) / 60000,
+            );
+            duration =
+              mins < 60
+                ? `${mins}m`
+                : `${Math.floor(mins / 60)}h ${mins % 60}m`;
+          } else if (r.check_in && !r.check_out) {
+            const mins = Math.round(
+              (Date.now() - new Date(r.check_in)) / 60000,
+            );
+            duration = `<span style="color:var(--muted)">${mins}m so far</span>`;
+          }
+
+          const photo = r.photo_url
+            ? `<a href="${r.photo_url}" target="_blank" style="color:var(--accent);">📷</a>`
+            : "—";
+
+          // Show checkout button only for active visitors
+          const action = !r.check_out
+            ? `<button
+           class="btn btn-outline btn-sm"
+           style="font-size:11px;padding:4px 10px;"
+           onclick="checkOutVisitor(${r.visit_id}, this)">
+           Check Out
+         </button>`
+            : '<span style="color:var(--muted);font-size:11px;">Done</span>';
+
+          html += `<tr id="visit-row-${r.visit_id}">
+      <td>${i + 1}</td>
+      <td><strong>${r.name || "—"}</strong></td>
+      <td>${r.company || "—"}</td>
+      <td>${r.visit_type || "—"}</td>
+      <td>${r.purpose || "—"}</td>
+      <td>${r.host_name || "—"}</td>
+      <td>${timeIn}</td>
+      <td id="checkout-time-${r.visit_id}">${timeOut}</td>
+      <td id="checkout-duration-${r.visit_id}">${duration}</td>
+      <td>${photo}</td>
+      <td id="checkout-action-${r.visit_id}">${action}</td>
+    </tr>`;
+        });
+        container.innerHTML = html + "</tbody></table>";
+      }
+
+      // ── CHECK OUT ─────────────────────────────────────────
+      async function checkOutVisitor(visitId, btn) {
+        // Disable button immediately to prevent double-clicks
+        btn.disabled = true;
+        btn.textContent = "...";
+
+        try {
+          const res = await fetch(
+            `${API_BASE}/api/visitors/${visitId}/checkout`,
+            {
+              method: "PATCH",
+              headers: { "Content-Type": "application/json" },
+            },
+          );
+
+          const data = await res.json();
+
+          if (!res.ok) {
+            toast(data.error || "Check-out failed");
+            btn.disabled = false;
+            btn.textContent = "Check Out";
+            return;
+          }
+
+          // Update the row in-place without reloading the whole table
+          const checkOutTime = new Date(data.check_out).toLocaleTimeString(
+            "en-KE",
+            { hour: "2-digit", minute: "2-digit" },
+          );
+
+          document.getElementById(`checkout-time-${visitId}`).innerHTML =
+            checkOutTime;
+          document.getElementById(`checkout-action-${visitId}`).innerHTML =
+            '<span style="color:var(--muted);font-size:11px;">Done</span>';
+
+          // Recalculate duration from the row's check-in time
+          const row = document.getElementById(`visit-row-${visitId}`);
+          const timeInCell = row.cells[6].textContent;
+          const checkOutDate = new Date(data.check_out);
+          // Use the server-returned check_out for duration display
+          document.getElementById(`checkout-duration-${visitId}`).textContent =
+            (() => {
+              // Re-fetch the row data isn't available here, so show a simple done state
+              return "✓";
+            })();
+
+          toast(`✅ Visitor checked out at ${checkOutTime}`);
+        } catch (err) {
+          console.error("Checkout error:", err);
+          toast("❌ Could not reach server");
+          btn.disabled = false;
+          btn.textContent = "Check Out";
+        }
+      }
+
+      // Export live DB data as CSV (replaces localStorage export)
+      async function exportCSVFromDB() {
+        try {
+          const res = await fetch(
+            `${API_BASE}/api/visitors/today?_=${Date.now()}`,
+          );
+          const rows = await res.json();
+          if (!rows.length) {
+            toast("No data to export");
+            return;
+          }
+          const header = [
+            "Name",
+            "Company",
+            "Visit Type",
+            "Purpose",
+            "Host",
+            "Time In",
+            "Time Out",
+            "Duration",
+            "Photo URL",
+          ];
+          const lines = [header.join(",")];
+          rows.forEach((r) => {
+            let duration = "";
+            if (r.check_in && r.check_out) {
+              const mins = Math.round(
+                (new Date(r.check_out) - new Date(r.check_in)) / 60000,
+              );
+              duration =
+                mins < 60
+                  ? `${mins}m`
+                  : `${Math.floor(mins / 60)}h ${mins % 60}m`;
+            }
+            lines.push(
+              [
+                `"${r.name || ""}"`,
+                `"${r.company || ""}"`,
+                `"${r.visit_type || ""}"`,
+                `"${r.purpose || ""}"`,
+                `"${r.host_name || ""}"`,
+                `"${r.check_in ? new Date(r.check_in).toLocaleString("en-KE") : ""}"`,
+                `"${r.check_out ? new Date(r.check_out).toLocaleString("en-KE") : "Active"}"`,
+                `"${duration}"`,
+                `"${r.photo_url || ""}"`,
+              ].join(","),
+            );
+          });
+          const a = document.createElement("a");
+          a.href = URL.createObjectURL(
+            new Blob([lines.join("\n")], { type: "text/csv" }),
+          );
+          a.download =
+            "visitors_" + new Date().toISOString().split("T")[0] + ".csv";
+          a.click();
+        } catch (err) {
+          console.error("Export error:", err);
+          toast("Export failed — check connection");
+        }
+      }
+
+      // ── CHECKOUT MODAL ────────────────────────────────────
+      async function showCheckOut() {
+        const overlay = document.getElementById("checkOutOverlay");
+        const loading = document.getElementById("checkOutLoading");
+        const content = document.getElementById("checkOutContent");
+        const subtitle = document.getElementById("checkOutSubtitle");
+
+        overlay.classList.add("show");
+        content.innerHTML = "";
+        subtitle.textContent = "";
+        loading.style.display = "block";
+
+        try {
+          const res = await fetch(
+            `${API_BASE}/api/visitors/today?_=${Date.now()}`,
+          );
+          if (!res.ok) throw new Error("Server error");
+          const rows = await res.json();
+          loading.style.display = "none";
+
+          // Filter to only active (not yet checked out) visitors
+          const active = rows.filter((r) => !r.check_out);
+
+          if (!active.length) {
+            subtitle.textContent = "No active visitors at the moment.";
+            content.innerHTML = `
+        <div style="text-align:center; padding:32px 0; color:var(--muted);">
+          <div style="font-size:48px; margin-bottom:12px;">✅</div>
+          <div style="font-weight:700; font-size:15px; color:var(--text);">All visitors have checked out</div>
+          <div style="font-size:13px; margin-top:6px;">No one is currently signed in.</div>
+        </div>`;
+            return;
+          }
+
+          subtitle.textContent = `${active.length} visitor${active.length !== 1 ? "s" : ""} currently signed in`;
+          renderCheckOutList(content, active);
+        } catch (err) {
+          loading.style.display = "none";
+          content.innerHTML =
+            '<p style="color:var(--muted);padding:14px 0;">Could not load visitors — check your connection.</p>';
+          console.error("showCheckOut error:", err);
+        }
+      }
+
+      function renderCheckOutList(container, rows) {
+        let html = "";
+        rows.forEach((r) => {
+          const timeIn = r.check_in
+            ? new Date(r.check_in).toLocaleTimeString("en-KE", {
+                hour: "2-digit",
+                minute: "2-digit",
+              })
+            : "—";
+          const mins = r.check_in
+            ? Math.round((Date.now() - new Date(r.check_in)) / 60000)
+            : 0;
+          const duration =
+            mins < 60 ? `${mins}m` : `${Math.floor(mins / 60)}h ${mins % 60}m`;
+
+          html += `
+      <div id="checkout-card-${r.visit_id}" style="
+        display:flex; align-items:center; justify-content:space-between;
+        padding:14px 16px; margin-bottom:10px;
+        background:var(--surface); border:1.5px solid var(--border);
+        border-radius:var(--radius); gap:12px; flex-wrap:wrap;
+      ">
+        <div style="display:flex; align-items:center; gap:12px; flex:1; min-width:0;">
+          <div style="
+            width:42px; height:42px; border-radius:50%;
+            background:linear-gradient(135deg,#2e5a3a,#4a8c5c);
+            display:flex; align-items:center; justify-content:center;
+            font-size:18px; flex-shrink:0; color:#fff; font-weight:700;
+          ">${(r.name || "?")[0].toUpperCase()}</div>
+          <div style="min-width:0;">
+            <div style="font-weight:700; font-size:14px; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+              ${r.name || "—"}
+            </div>
+            <div style="font-size:11px; color:var(--muted); margin-top:2px;">
+              ${r.visit_type || "—"}${r.company ? " · " + r.company : ""} · In at ${timeIn} · ${duration}
+            </div>
+          </div>
+        </div>
+        <button
+          id="co-btn-${r.visit_id}"
+          onclick="doCheckOut(${r.visit_id})"
+          style="
+            background:#2e5a3a; color:#fff; border:none;
+            border-radius:var(--radius); padding:10px 18px;
+            font-family:'Nunito Sans',sans-serif; font-weight:700;
+            font-size:13px; cursor:pointer; flex-shrink:0;
+            transition: background 0.2s, transform 0.1s;
+          "
+          onmousedown="this.style.transform='scale(0.96)'"
+          onmouseup="this.style.transform='scale(1)'"
+        >
+          Check Out
+        </button>
+      </div>`;
+        });
+        container.innerHTML = html;
+      }
+
+      async function doCheckOut(visitId) {
+        const btn = document.getElementById(`co-btn-${visitId}`);
+        btn.disabled = true;
+        btn.textContent = "…";
+
+        try {
+          const res = await fetch(
+            `${API_BASE}/api/visitors/${visitId}/checkout`,
+            {
+              method: "PATCH",
+              headers: { "Content-Type": "application/json" },
+            },
+          );
+          const data = await res.json();
+
+          if (!res.ok) {
+            toast(data.error || "Check-out failed");
+            btn.disabled = false;
+            btn.textContent = "Check Out";
+            return;
+          }
+
+          const checkOutTime = new Date(data.check_out).toLocaleTimeString(
+            "en-KE",
+            { hour: "2-digit", minute: "2-digit" },
+          );
+
+          // Animate the card out then remove it
+          const card = document.getElementById(`checkout-card-${visitId}`);
+          card.style.transition = "opacity 0.3s, transform 0.3s";
+          card.style.opacity = "0";
+          card.style.transform = "scale(0.96)";
+
+          setTimeout(() => {
+            card.remove();
+            toast(`✅ Checked out at ${checkOutTime}`);
+
+            // Update subtitle count
+            const remaining = document.querySelectorAll(
+              '[id^="checkout-card-"]',
+            ).length;
+            const subtitle = document.getElementById("checkOutSubtitle");
+            if (remaining === 0) {
+              subtitle.textContent = "";
+              document.getElementById("checkOutContent").innerHTML = `
+          <div style="text-align:center; padding:32px 0; color:var(--muted);">
+            <div style="font-size:48px; margin-bottom:12px;">✅</div>
+            <div style="font-weight:700; font-size:15px; color:var(--text);">All visitors have checked out</div>
+            <div style="font-size:13px; margin-top:6px;">No one is currently signed in.</div>
+          </div>`;
+            } else {
+              subtitle.textContent = `${remaining} visitor${remaining !== 1 ? "s" : ""} currently signed in`;
+            }
+          }, 300);
+        } catch (err) {
+          console.error("doCheckOut error:", err);
+          toast("❌ Could not reach server");
+          btn.disabled = false;
+          btn.textContent = "Check Out";
+        }
+      }
+
+      function closeCheckOut() {
+        const overlay = document.getElementById("checkOutOverlay");
+        const modal = document.getElementById("checkOutModal");
+        modal.style.animation =
+          "popupOut 0.2s cubic-bezier(0.4,0,1,1) forwards";
+        overlay.style.animation = "overlayFadeOut 0.2s ease forwards";
+        setTimeout(() => {
+          overlay.classList.remove("show");
+          overlay.style.animation = "";
+          modal.style.animation = "";
+        }, 200);
+      }
+
+      function closeCheckOutOnBg(e) {
+        if (e.target === document.getElementById("checkOutOverlay"))
+          closeCheckOut();
+      }
+
+      function closeLog() {
+        const overlay = document.getElementById("logOverlay");
+        const modal = document.getElementById("logModal");
+
+        // Reverse the entrance animation
+        modal.style.animation =
+          "popupOut 0.2s cubic-bezier(0.4, 0, 1, 1) forwards";
+        overlay.style.animation = "overlayFadeOut 0.2s ease forwards";
+
+        setTimeout(() => {
+          overlay.classList.remove("show");
+          overlay.style.animation = "";
+          modal.style.animation = "";
+        }, 200);
+      }
+
+      function closeLogOnBg(e) {
+        // Only close if clicking the dark backdrop, not the modal itself
+        if (e.target === document.getElementById("logOverlay")) closeLog();
+      }
+
+      // ── EXPORT CSV ────────────────────────────────────────
+      function exportCSV() {
+        const keys = [
+          "fullName",
+          "phone",
+          "idNumber",
+          "email",
+          "company",
+          "vehicle",
+          "visitType",
+          "purposeDetail",
+          "hostName",
+          "hostDept",
+          "hostPhone",
+          "sigConsent",
+          "checkIn",
+        ];
+        const header = [
+          "Name",
+          "Phone",
+          "ID Number",
+          "Email",
+          "Company",
+          "Vehicle",
+          "Visit Type",
+          "Purpose",
+          "Host",
+          "Dept",
+          "Host Phone",
+          "Signed",
+          "Check In",
+        ];
+        const rows = [header.join(",")];
+        localVisitors.forEach((v) =>
+          rows.push(
+            keys
+              .map((k) => `"${(v[k] || "").toString().replace(/"/g, '""')}"`)
+              .join(","),
+          ),
+        );
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(
+          new Blob([rows.join("\n")], { type: "text/csv" }),
+        );
+        a.download =
+          "vivo_visitors_" + new Date().toISOString().split("T")[0] + ".csv";
+        a.click();
+      }
+
+      // ── NEW VISITOR ───────────────────────────────────────
+      function newVisitor() {
+        form = {};
+        sigHasData = false;
+        document
+          .querySelectorAll("input, textarea")
+          .forEach((el) => (el.value = ""));
+        document
+          .querySelectorAll("select")
+          .forEach((el) => (el.selectedIndex = 0));
+        document
+          .querySelectorAll(".visit-card")
+          .forEach((c) => c.classList.remove("selected"));
+        ["capturedPhoto", "photoTaken", "sigSection", "sigDeclined"].forEach(
+          (id) => (document.getElementById(id).style.display = "none"),
+        );
+        document.getElementById("cameraPlaceholder").style.display = "flex";
+        document.getElementById("sigToggle").classList.remove("on");
+        document.getElementById("sigToggleLabel").textContent =
+          "I consent to signing electronically";
+        document.getElementById("syncStatus").style.display = "none";
+        document.getElementById("stepsBar").style.display = "flex";
+        document.getElementById("confirmPhoto").style.display = "none";
+        document.getElementById("confirmPhotoPlaceholder").style.display =
+          "block";
+        // Clear check-in time so it gets reset to 'now' when page 3 opens
+        const checkInField = document.getElementById("checkInTime");
+        if (checkInField) checkInField.value = "";
+        currentStep = 1;
+        goTo(1);
+      }
+
+      // ── TOAST ─────────────────────────────────────────────
+      function toast(msg) {
+        const t = document.getElementById("toast");
+        t.textContent = msg;
+        t.classList.add("show");
+        setTimeout(() => t.classList.remove("show"), 2800);
+      }
+    </script>
+  </body>
+</html>

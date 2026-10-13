@@ -1,0 +1,173 @@
+/* ── Vivo VMS design tokens (carried over from the existing pages) ── */
+:root {
+  --green: #2e5a3a;
+  --green-dark: #1a3322;
+  --accent: #c8593a;
+  --accent2: #a0401f;
+  --text: #1a1208;
+  --muted: #8a7e72;
+  --surface: #faf7f2;
+  --surface2: #f0ebe1;
+  --border: #e0d9cf;
+  --radius: 12px;
+  --sidebar: 230px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: "Nunito Sans", sans-serif;
+  background: var(--surface2);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, .serif { font-family: "Playfair Display", serif; }
+
+/* ── Layout ── */
+.layout { display: flex; min-height: 100vh; }
+.sidebar {
+  width: var(--sidebar);
+  background: var(--green);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0; left: 0; height: 100vh; z-index: 100;
+}
+.sidebar-logo { padding: 24px 20px; border-bottom: 1px solid rgba(255,255,255,.1); }
+.sidebar-logo-title { font-family: "Playfair Display", serif; font-size: 16px; }
+.sidebar-logo-sub { font-size: 9px; color: rgba(255,255,255,.5); letter-spacing: 2px; text-transform: uppercase; margin-top: 2px; }
+.sidebar-nav { flex: 1; padding: 16px 0; overflow-y: auto; }
+.nav-group-label { font-size: 9px; letter-spacing: 1.5px; color: rgba(255,255,255,.4); text-transform: uppercase; padding: 14px 20px 5px; }
+.nav-group:first-child .nav-group-label { padding-top: 4px; }
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 20px; color: rgba(255,255,255,.7);
+  font-size: 13px; font-weight: 600; cursor: pointer;
+  border-left: 3px solid transparent; transition: all .2s; width: 100%;
+  background: none; border-right: none; border-top: none; border-bottom: none;
+  text-align: left; font-family: inherit;
+}
+.nav-item:hover { background: rgba(255,255,255,.08); color: #fff; }
+.nav-item.active { background: rgba(255,255,255,.12); color: #fff; border-left-color: #fff; }
+.nav-icon { font-size: 16px; width: 20px; text-align: center; }
+.sidebar-footer { padding: 16px 20px; border-top: 1px solid rgba(255,255,255,.1); }
+.sidebar-user { font-size: 12px; color: rgba(255,255,255,.7); margin-bottom: 10px; }
+.sidebar-user strong { color: #fff; display: block; font-size: 13px; }
+.logout-btn {
+  width: 100%; padding: 8px; border-radius: 8px; cursor: pointer;
+  background: rgba(255,255,255,.1); color: #fff; border: none; font-family: inherit;
+  font-size: 12px; font-weight: 600;
+}
+.logout-btn:hover { background: rgba(255,255,255,.18); }
+
+.main { margin-left: var(--sidebar); flex: 1; padding: 28px 32px; max-width: 1100px; }
+.page-title { font-size: 24px; margin-bottom: 2px; }
+.page-sub { color: var(--muted); font-size: 13px; margin-bottom: 22px; }
+
+/* ── Cards ── */
+.card {
+  background: #fff; border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 18px 20px; box-shadow: 0 1px 3px rgba(0,0,0,.03);
+}
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
+
+/* ── Room status cards ── */
+.room-card { border-left: 4px solid var(--muted); }
+.room-card.open   { border-left-color: var(--green); }
+.room-card.booked { border-left-color: var(--accent); }
+.room-card.ending { border-left-color: #b7791f; }
+.room-card.grace  { border-left-color: var(--muted); }
+.room-name { font-size: 16px; margin-bottom: 2px; }
+.room-meta { font-size: 12px; color: var(--muted); margin-bottom: 12px; }
+.room-status { font-size: 13px; margin-bottom: 14px; min-height: 20px; }
+.room-card.open   .room-status { color: var(--green); }
+.room-card.booked .room-status { color: var(--accent2); }
+.room-card.ending .room-status { color: #b7791f; }
+
+/* ── Buttons ── */
+.btn {
+  font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer;
+  border-radius: 8px; padding: 9px 14px; border: 1px solid transparent; transition: all .15s;
+}
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:hover:not(:disabled) { background: var(--accent2); }
+.btn-dark { background: var(--green); color: #fff; }
+.btn-dark:hover:not(:disabled) { background: var(--green-dark); }
+.btn-ghost { background: #fff; color: var(--muted); border-color: var(--border); }
+.btn-ghost:hover:not(:disabled) { color: var(--text); }
+.btn-danger { background: #fff; color: var(--accent); border-color: #eab8aa; }
+.btn-danger:hover:not(:disabled) { background: #fdeee9; }
+.btn-block { width: 100%; }
+.btn-sm { padding: 6px 10px; font-size: 12px; }
+.btn-row { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* ── Forms ── */
+.field { margin-bottom: 14px; }
+label { display: block; font-size: 11px; font-weight: 700; color: var(--muted); letter-spacing: .5px; margin-bottom: 5px; text-transform: uppercase; }
+input, select, textarea {
+  width: 100%; padding: 9px 11px; border: 1px solid var(--border); border-radius: 8px;
+  font-size: 14px; font-family: inherit; background: #fff; color: var(--text);
+}
+input:focus, select:focus, textarea:focus { outline: 2px solid var(--green); outline-offset: -1px; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.hint { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+/* ── Tables ── */
+.table-card { background: #fff; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+table { width: 100%; border-collapse: collapse; }
+th { padding: 10px 14px; text-align: left; font-size: 10px; font-weight: 700; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; border-bottom: 1px solid var(--border); background: var(--surface2); white-space: nowrap; }
+td { padding: 11px 14px; font-size: 13px; border-bottom: 1px solid rgba(224,217,207,.5); }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: var(--surface); }
+
+/* ── Badges / pills ── */
+.badge { display: inline-block; padding: 2px 9px; border-radius: 20px; font-size: 10px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; }
+.badge-open    { background: #d4edda; color: #1a6632; }
+.badge-booked  { background: #ffe5db; color: var(--accent); }
+.badge-ending  { background: #fef3c7; color: #854d0e; }
+.badge-grace   { background: var(--surface2); color: var(--muted); }
+.badge-done    { background: var(--surface2); color: var(--muted); }
+.badge-flag    { background: #fef3c7; color: #854d0e; }
+
+/* ── Chips (selected attendees) ── */
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.chip { display: inline-flex; align-items: center; gap: 6px; background: var(--surface2); border: 1px solid var(--border); border-radius: 20px; padding: 4px 10px; font-size: 12px; }
+.chip button { background: none; border: none; cursor: pointer; color: var(--muted); font-size: 14px; line-height: 1; }
+
+/* ── Feedback ── */
+.notice { border-radius: 8px; padding: 10px 12px; font-size: 13px; margin-bottom: 14px; }
+.notice-err { background: #fdeee9; color: var(--accent2); border: 1px solid #eab8aa; }
+.notice-ok  { background: #d4edda; color: #1a6632; border: 1px solid #a9d6b5; }
+.empty { color: var(--muted); font-size: 14px; padding: 28px 0; text-align: center; }
+.muted { color: var(--muted); }
+.section-gap { margin-bottom: 26px; }
+
+/* ── Login ── */
+.login-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 1.5rem; background: linear-gradient(135deg, var(--green) 0%, var(--green-dark) 100%); }
+.login-card { background: var(--surface); width: 100%; max-width: 380px; border-radius: 16px; padding: 30px 28px; box-shadow: 0 24px 60px rgba(0,0,0,.3); }
+.login-card h1 { color: var(--green); font-size: 22px; }
+.login-card .sub { color: var(--muted); font-size: 12px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 22px; }
+
+@media (max-width: 860px) {
+  .sidebar { transform: translateX(-100%); }
+  .main { margin-left: 0; padding: 20px; }
+  .row2 { grid-template-columns: 1fr; }
+}
+
+/* ── Day pills (recurrence) ── */
+.day-pills { display: flex; flex-wrap: wrap; gap: 6px; }
+.day-pill {
+  font-family: inherit; font-size: 12px; font-weight: 700; cursor: pointer;
+  padding: 7px 11px; border-radius: 8px; border: 1px solid var(--border);
+  background: #fff; color: var(--muted);
+}
+.day-pill.selected { background: #ffe5db; color: var(--accent); border-color: var(--accent); }
+
+/* ── Recurring badge ── */
+.badge-repeat { background: #e7edf7; color: #1e40af; }
+
+/* ── Sidebar notification count ── */
+.nav-count { background: var(--accent); color: #fff; border-radius: 20px; font-size: 10px; font-weight: 700; padding: 1px 7px; min-width: 18px; text-align: center; }
