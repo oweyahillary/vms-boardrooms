@@ -5,7 +5,7 @@
  * Make sure your .env DATABASE_URL points at the target database first.
  */
 require('dotenv').config();
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const db     = require('./db');
 
 const [email, password, name = 'Administrator'] = process.argv.slice(2);
