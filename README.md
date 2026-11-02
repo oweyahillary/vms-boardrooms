@@ -154,7 +154,9 @@ Run **once** in the Supabase SQL Editor, in order (all are safe to re-run):
 
 ### 1. Supabase
 1. Create a project in region **Central EU (Frankfurt)**.
-2. SQL Editor → run the five migrations above, in order.
+2. Run the migrations: put the Session-pooler `DATABASE_URL` in your local
+   `.env` and run `npm run migrate` (or paste the five files into the SQL
+   Editor, in order).
 3. Settings → Database → **Connection pooling → Session mode** → copy the URI
    (this is `DATABASE_URL`; put your DB password in it).
 4. Settings → API → copy the **Project URL** (`SUPABASE_URL`) and the

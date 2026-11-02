@@ -18,6 +18,13 @@ END $$;
 -- ── Storage bucket for visitor photos / signatures ────
 -- Public read (photo_url links are plain public URLs). Uploads come only
 -- from the server using the service_role key, so no insert policy needed.
-INSERT INTO storage.buckets (id, name, public)
-VALUES ('visitor-files', 'visitor-files', true)
-ON CONFLICT (id) DO NOTHING;
+-- Wrapped so a non-Supabase DB (or restricted storage schema) just skips it;
+-- in that case create the bucket in Dashboard → Storage instead.
+DO $$
+BEGIN
+  INSERT INTO storage.buckets (id, name, public)
+  VALUES ('visitor-files', 'visitor-files', true)
+  ON CONFLICT (id) DO NOTHING;
+EXCEPTION WHEN others THEN
+  RAISE NOTICE 'visitor-files bucket not created (%): create it in Dashboard → Storage', SQLERRM;
+END $$;
