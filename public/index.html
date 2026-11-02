@@ -1669,6 +1669,17 @@
 
       // Visitor list + checkout need the kiosk passcode (KIOSK_KEY on the
       // server). Asked once per device, then remembered; re-asked if wrong.
+      // Escape visitor-supplied text before putting it in innerHTML —
+      // check-in is public, so names/companies are untrusted input.
+      function esc(v) {
+        return String(v ?? "").replace(/[&<>"']/g, (c) =>
+          ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+      }
+      // Only link to real http(s) URLs (blocks javascript: etc.).
+      function safeUrl(u) {
+        return /^https?:\/\//i.test(u || "") ? esc(u) : "";
+      }
+
       const KIOSK_KEY_STORE = "vms_kiosk_key";
       async function kioskFetch(url, opts = {}) {
         for (let attempt = 0; attempt < 2; attempt++) {
@@ -2075,9 +2086,9 @@
           }
           resultsEl.innerHTML = list
             .map((u) => {
-              const dept = u.department ? " · " + u.department : "";
-              const name = String(u.name).replace(/"/g, "&quot;");
-              return `<div class="host-opt" data-id="${u.id}" data-name="${name}" data-dept="${(u.department || "").replace(/"/g, "&quot;")}" style="padding:10px 12px;cursor:pointer;border-bottom:1px solid #f0ece2;">${u.name}<span style="color:#9a9384;">${dept}</span></div>`;
+              const dept = u.department ? " · " + esc(u.department) : "";
+              const name = esc(u.name);
+              return `<div class="host-opt" data-id="${esc(u.id)}" data-name="${name}" data-dept="${esc(u.department)}" style="padding:10px 12px;cursor:pointer;border-bottom:1px solid #f0ece2;">${name}<span style="color:#9a9384;">${dept}</span></div>`;
             })
             .join("");
           resultsEl.style.display = "block";
@@ -2188,8 +2199,8 @@
             duration = `<span style="color:var(--muted)">${mins}m so far</span>`;
           }
 
-          const photo = r.photo_url
-            ? `<a href="${r.photo_url}" target="_blank" style="color:var(--accent);">📷</a>`
+          const photo = safeUrl(r.photo_url)
+            ? `<a href="${safeUrl(r.photo_url)}" target="_blank" rel="noopener" style="color:var(--accent);">📷</a>`
             : "—";
 
           // Show checkout button only for active visitors
@@ -2204,11 +2215,11 @@
 
           html += `<tr id="visit-row-${r.visit_id}">
       <td>${i + 1}</td>
-      <td><strong>${r.name || "—"}</strong></td>
-      <td>${r.company || "—"}</td>
-      <td>${r.visit_type || "—"}</td>
-      <td>${r.purpose || "—"}</td>
-      <td>${r.host_name || "—"}</td>
+      <td><strong>${esc(r.name) || "—"}</strong></td>
+      <td>${esc(r.company) || "—"}</td>
+      <td>${esc(r.visit_type) || "—"}</td>
+      <td>${esc(r.purpose) || "—"}</td>
+      <td>${esc(r.host_name) || "—"}</td>
       <td>${timeIn}</td>
       <td id="checkout-time-${r.visit_id}">${timeOut}</td>
       <td id="checkout-duration-${r.visit_id}">${duration}</td>
@@ -2407,13 +2418,13 @@
             background:linear-gradient(135deg,#2e5a3a,#4a8c5c);
             display:flex; align-items:center; justify-content:center;
             font-size:18px; flex-shrink:0; color:#fff; font-weight:700;
-          ">${(r.name || "?")[0].toUpperCase()}</div>
+          ">${esc((r.name || "?")[0].toUpperCase())}</div>
           <div style="min-width:0;">
             <div style="font-weight:700; font-size:14px; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
-              ${r.name || "—"}
+              ${esc(r.name) || "—"}
             </div>
             <div style="font-size:11px; color:var(--muted); margin-top:2px;">
-              ${r.visit_type || "—"}${r.company ? " · " + r.company : ""} · In at ${timeIn} · ${duration}
+              ${esc(r.visit_type) || "—"}${r.company ? " · " + esc(r.company) : ""} · In at ${timeIn} · ${duration}
             </div>
           </div>
         </div>
