@@ -10,6 +10,9 @@ Visitor Management System **and** internal boardroom booking, running as a
   booking, in one role-gated interface. The old `/admin` and `/boardrooms`
   URLs redirect here.
 
+Hosting: **Render** (web service, Frankfurt) + **Supabase** (Postgres +
+Storage, eu-central-1).
+
 ---
 
 ## Project layout
@@ -19,52 +22,56 @@ vms/
 ├── index.js                 # Express: API + static frontend (single service)
 ├── db.js                    # Postgres pool (Supabase). SSL off locally via PGSSL=off
 ├── render.yaml              # Render Blueprint — one web service
-├── create-admin.js          # One-off: create the first superadmin
+├── create-admin.js          # Create / reset a superadmin from the command line
 ├── controllers/
 │   ├── visitor.controller.js    # check-in / checkout / today  (+ host_user_id)
 │   ├── admin.controller.js      # login, dashboard, users, invitations
 │   ├── staff.controller.js      # kiosk directory + "my visitors"
 │   ├── room.controller.js       # rooms + derived live status
-│   └── booking.controller.js    # bookings + conflict/grace/capacity checks
+│   ├── booking.controller.js    # bookings + conflict/grace/capacity checks
+│   ├── series.controller.js     # recurring bookings
+│   ├── notification.controller.js
+│   └── report.controller.js
 ├── routes/                  # visitor / admin / staff / boardroom
 ├── middleware/auth.middleware.js
-├── services/storage.service.js  # Supabase Storage (photos/signatures)
+├── services/                # storage (Supabase Storage), notify, recurrence
 ├── utils/logger.js
 ├── db/
-│   ├── init.sql             # base tables (v10)
-│   ├── migrate_v11.sql      # rooms, bookings, invitations, host link  ← RUN THIS
-│   └── admin_seed.sql
+│   ├── init.sql             # base tables
+│   ├── migrate_v11.sql      # rooms, bookings, invitations, host link
+│   ├── migrate_v12.sql      # recurring bookings
+│   ├── migrate_v13.sql      # notifications
+│   └── migrate_v14.sql      # Supabase RLS lockdown + storage bucket
 └── public/
     ├── index.html           # kiosk (vanilla)
-    ├── admin.html           # admin dashboard (vanilla)
     ├── accept-invite.html   # invited users set their password here
-    └── boardrooms/          # built React app (Vite output — git-ignored)
+    └── app/                 # built React app (Vite output — git-ignored)
 
-frontend/                    # React (Vite) source for the boardrooms app
+frontend/                    # React (Vite) source for /app
 ├── index.html
-├── vite.config.js           # base '/boardrooms/', builds into ../public/boardrooms
+├── vite.config.js           # base '/app/', builds into ../public/app
 └── src/
     ├── main.jsx  App.jsx  api.js  util.js  styles.css
-    └── views/  Login · Rooms · BookRoom · MyVisitors · MyBookings · RoomAdmin · InviteUser
+    └── views/
 ```
 
 ---
 
 ## Testing locally
 
-You need Node 18+ and a Postgres database. Pick one database option below.
+You need Node 20+ and a Postgres database. Pick one database option below.
 
 ```bash
-# 1. install deps and build the boardrooms app
+# 1. install deps and build the app
 npm install
 cd frontend && npm install && npm run build && cd ..
 
 # 2. create your .env  (see options below)
 cp .env.example .env
 
-# 3. run the migrations against your DB (init → v11 → v12 → v13)
+# 3. run the migrations against your DB (see "Database migration")
 # 4. create the first superadmin
-node create-admin.js          # admin@vivofashiongroup.com / Admin@Vivo2024
+node create-admin.js you@vivofashiongroup.com "A-Strong-Password"
 
 # 5. start
 node index.js                 # http://localhost:3000
@@ -73,15 +80,14 @@ node index.js                 # http://localhost:3000
 Then open:
 - `http://localhost:3000/` — kiosk (visitor check-in)
 - `http://localhost:3000/app` — the unified app (dashboard, visitor log,
-  rooms, bookings, reports, users) — log in to enter. `/admin` and
-  `/boardrooms` redirect here.
+  rooms, bookings, reports, users) — log in to enter.
 
 **Database option A — use your Supabase (simplest).** Point `DATABASE_URL` at
 your Supabase Session-mode pooler URL and leave SSL on (don't set `PGSSL`).
-Run the four SQL files in the Supabase SQL Editor. Photo/signature upload also
-works because Supabase Storage is configured.
+Run the SQL files in the Supabase SQL Editor.
 
-**Database option B — local Postgres.** Create a DB and run the SQL with `psql`:
+**Database option B — local Postgres.** Create a DB and run the SQL with `psql`
+(skip `migrate_v14.sql` — it is Supabase-specific):
 
 ```bash
 createdb vms
@@ -101,55 +107,29 @@ APP_URL=http://localhost:3000
 With a local DB and no Supabase keys, everything works except visitor photo/
 signature upload, which safely no-ops (check-in still succeeds).
 
-**Try the full flow:** log in at `/admin` or `/boardrooms` → invite yourself as
-`staff` (copy the invite link, set a password) → open the kiosk at `/` and check
-in a visitor, picking your name as the host → back in `/boardrooms` you'll see
-the visitor under *My visitors* and a *Notifications* alert → book a room and add
-the visitor as an attendee.
+**Try the full flow:** log in at `/app` → invite yourself as `staff` (copy the
+invite link, set a password) → open the kiosk at `/` and check in a visitor,
+picking your name as the host → back in `/app` you'll see the visitor under
+*My visitors* and a *Notifications* alert → book a room and add the visitor as
+an attendee.
 
-**Frontend hot-reload (optional):** instead of rebuilding after each change, run
-`node index.js` in one terminal and `cd frontend && npm run dev` in another, then
-use `http://localhost:5173/boardrooms/` — API calls proxy to :3000 automatically.
-
----
-
-## Frontend (React) — the boardrooms app
-
-The `/boardrooms` app is a Vite + React project in `frontend/`. It builds into
-`public/boardrooms/`, which the single service serves. It shares the login
-token with `/admin`, so the same session works across both.
-
-```bash
-cd frontend
-npm install
-npm run dev        # local dev server with hot reload
-npm run build      # outputs to ../public/boardrooms (what the backend serves)
-```
-
-The kiosk (`/`) and admin (`/admin`) pages stay vanilla HTML for now. On Render,
-the build runs automatically — `render.yaml` already installs and builds the
-frontend as part of the deploy.
+**Frontend hot-reload (optional):** run `node index.js` in one terminal and
+`cd frontend && npm run dev` in another, then use `http://localhost:5173/app/`
+— API calls proxy to :3000 automatically.
 
 ---
 
-## Local setup (backend)
-
-```bash
-npm install
-cp .env.example .env        # fill in the values (see below)
-node create-admin.js        # creates the first superadmin
-npm run dev                 # nodemon on http://localhost:3000
-```
-
-`.env`:
+## Environment variables
 
 | var           | what                                                            |
 |---------------|----------------------------------------------------------------|
-| DATABASE_URL  | Supabase Session-mode pooler URL                               |
+| DATABASE_URL  | Supabase **Session-mode** pooler URL                          |
 | SUPABASE_URL  | Supabase project URL (for photo/signature storage)            |
-| SUPABASE_KEY  | Supabase anon key                                              |
+| SUPABASE_KEY  | Supabase **service_role** key — server-only, never in frontend |
 | JWT_SECRET    | long random string                                            |
 | APP_URL       | public base URL (used to build invite links)                  |
+| KIOSK_KEY     | kiosk passcode for the visitor list + checkout (blank = open, local only) |
+| TZ            | timezone for "today" / visit times; default `Africa/Nairobi`   |
 | PGSSL         | set to `off` only for a local no-SSL Postgres                 |
 | CORS_ORIGINS  | optional extra origins for local dev (blank in production)    |
 | EMAIL_ENABLED | set to enable the email hook (visitor-waiting emails); off by default |
@@ -158,43 +138,59 @@ npm run dev                 # nodemon on http://localhost:3000
 
 ## Database migration
 
-Run **once** in the Supabase SQL Editor, in order (skip any already applied):
+Run **once** in the Supabase SQL Editor, in order (all are safe to re-run):
 
-1. `db/init.sql` — base tables (if not already there)
+1. `db/init.sql` — base tables
 2. `db/migrate_v11.sql` — boardrooms + invitations + host linkage
 3. `db/migrate_v12.sql` — recurring bookings (series + skipped occurrences)
 4. `db/migrate_v13.sql` — notifications
-
-All migrations are additive and safe to re-run.
+5. `db/migrate_v14.sql` — enables RLS on every table (blocks Supabase's public
+   REST API; the server is unaffected) and creates the `visitor-files` bucket.
+   Re-run it whenever you add a table.
 
 ---
 
-## Deploy on Render (single service — Option A)
+## Deploy
 
-1. Push this folder to one GitHub repo.
-2. In Render: **New → Blueprint**, point it at the repo (it reads `render.yaml`).
-3. Set the secret env vars in the dashboard: `DATABASE_URL`, `SUPABASE_URL`,
-   `SUPABASE_KEY`, `JWT_SECRET`, `APP_URL` (= your Render URL, e.g.
-   `https://vms.onrender.com`).
-4. Deploy. The kiosk is at `/`, admin at `/admin`, boardrooms at `/boardrooms`.
+### 1. Supabase
+1. Create a project in region **Central EU (Frankfurt)**.
+2. SQL Editor → run the five migrations above, in order.
+3. Settings → Database → **Connection pooling → Session mode** → copy the URI
+   (this is `DATABASE_URL`; put your DB password in it).
+4. Settings → API → copy the **Project URL** (`SUPABASE_URL`) and the
+   **service_role** key (`SUPABASE_KEY`).
+5. On your PC, put `DATABASE_URL` in `.env` and run
+   `node create-admin.js you@vivofashiongroup.com "A-Strong-Password"`.
+
+### 2. Render
+1. Push this repo to GitHub.
+2. Render → **New → Blueprint** → pick the repo (it reads `render.yaml`:
+   free plan, Frankfurt, builds the React app, health check `/health`).
+3. Fill in the secrets it asks for: `DATABASE_URL`, `SUPABASE_URL`,
+   `SUPABASE_KEY`, `JWT_SECRET`, `KIOSK_KEY`, `APP_URL` (your Render URL,
+   e.g. `https://vms.onrender.com` — you can set it after the first deploy).
+   The kiosk tablet asks for `KIOSK_KEY` once, the first time someone opens
+   the visitor log or checkout, then remembers it.
+4. Open `https://<your-service>.onrender.com/health` → expect
+   `"database": "connected"`. Kiosk is at `/`, app at `/app`.
 
 Because the frontend is same-origin, the pages call the API with relative
 paths — there is no `API_BASE` to edit.
 
 ---
 
-## Keep-alive (free tier)
+## Keep-alive (free tiers)
 
-Render's free web service sleeps after **15 minutes** idle (cold start ~60s).
-Keep it warm during working hours so the kiosk is always instant:
+Render's free web service sleeps after **15 minutes** idle (cold start ~60s),
+and a free Supabase project **pauses after 7 days with no DB activity**.
+Use **cron-job.org** (free, timezone-aware) with two jobs:
 
-- Service: **cron-job.org** (free, timezone-aware)
-- URL: your service root `/` (lighter than `/health`, which hits the DB)
-- Interval: **every 10 minutes** (must be under 15)
-- Active hours: **06:00–21:00**, timezone **Africa/Nairobi**
+| job | URL | schedule |
+|-----|-----|----------|
+| keep Render warm | `/` (no DB hit) | every 10 min, 06:00–21:00 Africa/Nairobi |
+| keep Supabase awake | `/health` (runs `SELECT 1`) | once a day, every day |
 
-This uses ~457 of the 750 free instance-hours/month, and the only cold start
-each day is the 6am ping itself — no real person waits.
+The first job uses ~457 of the 750 free instance-hours/month.
 
 ---
 
@@ -214,8 +210,8 @@ each day is the 6am ping itself — no real person waits.
 
 **Public**
 - `POST /api/visitors` — check in (accepts `hostUserId`)
-- `GET  /api/visitors/today`
-- `PATCH /api/visitors/:id/checkout`
+- `GET  /api/visitors/today` — needs `X-Kiosk-Key` header or a login token
+- `PATCH /api/visitors/:id/checkout` — needs `X-Kiosk-Key` header or a login token
 - `GET  /api/staff/directory?q=` — employee picker for the kiosk
 - `GET  /api/admin/invite?token=` / `POST /api/admin/accept-invite`
 

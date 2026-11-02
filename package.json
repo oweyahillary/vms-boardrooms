@@ -1,6 +1,9 @@
 {
   "name": "vms-backend",
   "version": "1.0.0",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "dev": "nodemon index.js",
     "start": "node index.js"

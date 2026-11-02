@@ -1667,6 +1667,24 @@
       // ══════════════════════════════════════════════════════
       const API_BASE = ""; // same-origin: served by the backend
 
+      // Visitor list + checkout need the kiosk passcode (KIOSK_KEY on the
+      // server). Asked once per device, then remembered; re-asked if wrong.
+      const KIOSK_KEY_STORE = "vms_kiosk_key";
+      async function kioskFetch(url, opts = {}) {
+        for (let attempt = 0; attempt < 2; attempt++) {
+          let key = "";
+          try { key = localStorage.getItem(KIOSK_KEY_STORE) || ""; } catch {}
+          const res = await fetch(url, {
+            ...opts,
+            headers: { ...(opts.headers || {}), "X-Kiosk-Key": key },
+          });
+          if (res.status !== 401 || attempt === 1) return res;
+          const entered = window.prompt("Enter the kiosk passcode:");
+          if (!entered) return res;
+          try { localStorage.setItem(KIOSK_KEY_STORE, entered.trim()); } catch {}
+        }
+      }
+
       // ── STATE ─────────────────────────────────────────────
       let form = {};
       let stream = null;
@@ -2112,7 +2130,7 @@
 
         loading.style.display = "block";
         try {
-          const res = await fetch(
+          const res = await kioskFetch(
             `${API_BASE}/api/visitors/today?_=${Date.now()}`,
           ); // cache-busting
           if (!res.ok) throw new Error("Server returned " + res.status);
@@ -2208,7 +2226,7 @@
         btn.textContent = "...";
 
         try {
-          const res = await fetch(
+          const res = await kioskFetch(
             `${API_BASE}/api/visitors/${visitId}/checkout`,
             {
               method: "PATCH",
@@ -2259,7 +2277,7 @@
       // Export live DB data as CSV (replaces localStorage export)
       async function exportCSVFromDB() {
         try {
-          const res = await fetch(
+          const res = await kioskFetch(
             `${API_BASE}/api/visitors/today?_=${Date.now()}`,
           );
           const rows = await res.json();
@@ -2330,7 +2348,7 @@
         loading.style.display = "block";
 
         try {
-          const res = await fetch(
+          const res = await kioskFetch(
             `${API_BASE}/api/visitors/today?_=${Date.now()}`,
           );
           if (!res.ok) throw new Error("Server error");
@@ -2425,7 +2443,7 @@
         btn.textContent = "…";
 
         try {
-          const res = await fetch(
+          const res = await kioskFetch(
             `${API_BASE}/api/visitors/${visitId}/checkout`,
             {
               method: "PATCH",

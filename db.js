@@ -2,6 +2,13 @@ require('dotenv').config();
 const { Pool } = require('pg');
 const logger   = require('./utils/logger');
 
+// ── Timezone ───────────────────────────────────────
+// Visit timestamps are TIMESTAMP (no zone) and "today" uses CURRENT_DATE,
+// so Node and the DB session must agree on one zone. Default to Nairobi so
+// "today" rolls over at local midnight, not 03:00 (servers run in UTC).
+const APP_TZ = process.env.TZ || 'Africa/Nairobi';
+process.env.TZ = APP_TZ;
+
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   // Supabase needs SSL; a local dev Postgres usually doesn't. Set PGSSL=off locally.
@@ -19,7 +26,10 @@ const pool = new Pool({
 });
 
 // ── Connection health logging ──────────────────────
-pool.on('connect', () => {
+pool.on('connect', (client) => {
+  // Queued before any caller's query on this client, so it always runs first.
+  client.query(`SET TIME ZONE '${APP_TZ}'`).catch((err) =>
+    logger.error({ event: 'db_set_timezone_failed', error: err.message }));
   logger.info({ event: 'db_connection_opened' });
 });
 

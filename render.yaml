@@ -5,6 +5,7 @@ services:
     name: vms
     runtime: node
     plan: free
+    region: frankfurt    # same region as the Supabase DB (eu-central-1)
     buildCommand: npm install && npm --prefix frontend install && npm --prefix frontend run build
     startCommand: node index.js
     healthCheckPath: /health
@@ -14,8 +15,12 @@ services:
       - key: SUPABASE_URL
         sync: false
       - key: SUPABASE_KEY
-        sync: false
+        sync: false      # service_role key (server-only, never sent to browsers)
       - key: JWT_SECRET
         sync: false
       - key: APP_URL
         sync: false      # e.g. https://vms.onrender.com
+      - key: KIOSK_KEY
+        sync: false      # passcode the kiosk device enters once (visitor list + checkout)
+      - key: TZ
+        value: Africa/Nairobi   # Node + DB session share this zone (see db.js)

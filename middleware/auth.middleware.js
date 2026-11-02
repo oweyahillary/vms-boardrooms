@@ -1,4 +1,27 @@
-const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
+const jwt    = require('jsonwebtoken');
+
+// Kiosk-only endpoints (today's visitor list, checkout). Passes with either
+// the kiosk passcode (X-Kiosk-Key == KIOSK_KEY) or a logged-in user's token.
+// If KIOSK_KEY is unset (local dev) the endpoints stay open.
+exports.requireKiosk = (req, res, next) => {
+  const expected = process.env.KIOSK_KEY;
+  if (!expected) return next();
+
+  const given = req.headers['x-kiosk-key'] || '';
+  const a = crypto.createHash('sha256').update(given).digest();
+  const b = crypto.createHash('sha256').update(expected).digest();
+  if (crypto.timingSafeEqual(a, b)) return next();
+
+  const header = req.headers.authorization;
+  if (header && header.startsWith('Bearer ')) {
+    try {
+      req.admin = jwt.verify(header.split(' ')[1], process.env.JWT_SECRET);
+      return next();
+    } catch { /* fall through */ }
+  }
+  res.status(401).json({ error: 'Kiosk passcode required.' });
+};
 
 // Verify JWT token on protected routes
 exports.requireAuth = (req, res, next) => {
