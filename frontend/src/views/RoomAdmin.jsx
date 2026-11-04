@@ -26,7 +26,7 @@ export default function RoomAdmin() {
   }
 
   async function remove(r) {
-    if (!confirm(`Delete ${r.name}? Rooms with bookings are deactivated instead.`)) return;
+    if (!confirm(`Delete ${r.name}? Boardrooms with bookings are deactivated instead.`)) return;
     try { await api.del(`/boardrooms/rooms/${r.id}`); load(); }
     catch (e) { setMsg({ type: 'err', text: e.message }); }
   }
@@ -36,11 +36,11 @@ export default function RoomAdmin() {
     const set = (k, v) => setEditing({ ...e, [k]: v });
     return (
       <div style={{ maxWidth: 520 }}>
-        <h1 className="page-title">{e.id ? 'Edit room' : 'New room'}</h1>
+        <h1 className="page-title">{e.id ? 'Edit boardroom' : 'New boardroom'}</h1>
         <div className="page-sub">&nbsp;</div>
         {msg && <div className="notice notice-err">{msg.text}</div>}
         <div className="card">
-          <div className="field"><label>Room name</label>
+          <div className="field"><label>Boardroom name</label>
             <input value={e.name} onChange={(x) => set('name', x.target.value)} /></div>
           <div className="row2">
             <div className="field"><label>Capacity</label>
@@ -53,16 +53,16 @@ export default function RoomAdmin() {
             <input value={e.purpose_tag || ''} placeholder="e.g. Client meetings" onChange={(x) => set('purpose_tag', x.target.value)} /></div>
           <div className="field"><label>Grace period (minutes)</label>
             <input type="number" min="0" value={e.grace_minutes} onChange={(x) => set('grace_minutes', x.target.value)} />
-            <div className="hint">Buffer to reset the room after each meeting.</div></div>
+            <div className="hint">Buffer to reset the boardroom after each meeting.</div></div>
           <div className="field">
             <label>Availability</label>
             <label style={{ display: 'flex', gap: 8, alignItems: 'center', textTransform: 'none', letterSpacing: 0, fontWeight: 400, fontSize: 14 }}>
               <input type="checkbox" style={{ width: 'auto' }} checked={e.is_active} onChange={(x) => set('is_active', x.target.checked)} />
-              Room is active and bookable
+              Boardroom is active and bookable
             </label>
           </div>
           <div className="btn-row">
-            <button className="btn btn-primary" onClick={save}>{e.id ? 'Save changes' : 'Create room'}</button>
+            <button className="btn btn-primary" onClick={save}>{e.id ? 'Save changes' : 'Create boardroom'}</button>
             <button className="btn btn-ghost" onClick={() => { setEditing(null); setMsg(null); }}>Cancel</button>
           </div>
         </div>
@@ -74,20 +74,20 @@ export default function RoomAdmin() {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <h1 className="page-title">Manage rooms</h1>
+          <h1 className="page-title">Manage boardrooms</h1>
           <div className="page-sub">Add, edit or retire boardrooms.</div>
         </div>
-        <button className="btn btn-dark" onClick={() => setEditing({ ...blank })}>+ New room</button>
+        <button className="btn btn-dark" onClick={() => setEditing({ ...blank })}>+ New boardroom</button>
       </div>
 
       {msg && <div className="notice notice-err">{msg.text}</div>}
       {!rooms && <div className="empty">Loading…</div>}
-      {rooms && rooms.length === 0 && <div className="empty">No rooms yet — add your first.</div>}
+      {rooms && rooms.length === 0 && <div className="empty">No boardrooms yet — add your first.</div>}
 
       {rooms && rooms.length > 0 && (
         <div className="table-card">
           <table>
-            <thead><tr><th>Room</th><th>Capacity</th><th>Min</th><th>Grace</th><th>Tag</th><th>Status</th><th></th></tr></thead>
+            <thead><tr><th>Boardroom</th><th>Capacity</th><th>Min</th><th>Grace</th><th>Tag</th><th>Status</th><th></th></tr></thead>
             <tbody>
               {rooms.map((r) => (
                 <tr key={r.id}>

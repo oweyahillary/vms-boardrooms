@@ -14,15 +14,18 @@ exports.create = async (req, res) => {
   const client = await db.connect();
   try {
     if (req.admin.role === 'readonly')
-      return res.status(403).json({ error: 'Read-only accounts cannot book rooms.' });
+      return res.status(403).json({ error: 'Read-only accounts cannot book boardrooms.' });
 
     const {
       roomId, purpose, startTime, endTime,
-      attendeeCount, visitIds = [], userIds = [], externalNames = []
+      attendeeCount, visitIds = [], userIds = [], externalNames = [],
+      meetingType = 'internal'
     } = req.body;
 
     if (!roomId || !startTime || !endTime)
-      return res.status(400).json({ error: 'Room, start time and end time are required.' });
+      return res.status(400).json({ error: 'Boardroom, start time and end time are required.' });
+    if (!['internal', 'visitor'].includes(meetingType))
+      return res.status(400).json({ error: 'Meeting type must be internal or visitor.' });
 
     const start = new Date(startTime), end = new Date(endTime);
     if (isNaN(start) || isNaN(end))
@@ -35,13 +38,13 @@ exports.create = async (req, res) => {
     const roomRes = await client.query(
       `SELECT * FROM rooms WHERE id=$1 AND is_active=true`, [roomId]);
     const room = roomRes.rows[0];
-    if (!room) return res.status(404).json({ error: 'Room not found or inactive.' });
+    if (!room) return res.status(404).json({ error: 'Boardroom not found or inactive.' });
 
     // Derive attendee count if not explicitly given.
     const count =
       (attendeeCount ?? (visitIds.length + userIds.length + externalNames.length)) || 1;
     if (count > room.capacity)
-      return res.status(400).json({ error: `Exceeds room capacity of ${room.capacity}.` });
+      return res.status(400).json({ error: `Exceeds boardroom capacity of ${room.capacity}.` });
 
     // ── Conflict check with grace buffer on both intervals ──
     const conflict = await client.query(
@@ -64,9 +67,9 @@ exports.create = async (req, res) => {
 
     await client.query('BEGIN');
     const booking = await client.query(
-      `INSERT INTO bookings (room_id, booked_by, purpose, start_time, end_time, attendee_count)
-       VALUES ($1,$2,$3,$4,$5,$6) RETURNING *`,
-      [roomId, req.admin.id, purpose, start.toISOString(), end.toISOString(), count]
+      `INSERT INTO bookings (room_id, booked_by, purpose, start_time, end_time, attendee_count, meeting_type)
+       VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *`,
+      [roomId, req.admin.id, purpose, start.toISOString(), end.toISOString(), count, meetingType]
     );
     const bookingId = booking.rows[0].id;
 

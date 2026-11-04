@@ -72,13 +72,13 @@ export default function App() {
       { id: 'bookings',      label: 'My bookings',   icon: '🗓️' },
       { id: 'notifications', label: 'Notifications', icon: '🔔', badge: unread },
     ] },
-    { label: 'Rooms', items: [
-      { id: 'rooms', label: 'Rooms', icon: '🏢' },
+    { label: 'Boardrooms', items: [
+      { id: 'rooms', label: 'Boardrooms', icon: '🏢' },
     ] },
     isManager && { label: 'Admin', items: [
       { id: 'reports', label: 'Reports', icon: '📈' },
       ...(isSuper ? [
-        { id: 'roomadmin', label: 'Manage rooms',   icon: '⚙️' },
+        { id: 'roomadmin', label: 'Manage boardrooms',   icon: '⚙️' },
         { id: 'users',     label: 'Users & invites', icon: '🔐' },
       ] : []),
     ] },

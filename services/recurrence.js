@@ -40,7 +40,7 @@ function computeDates({ firstDate, days, endType, endCount, endDate }, windowEnd
 
 // Insert occurrences for the given dates, conflict-checking each against
 // the room's confirmed bookings (respecting grace). q is a pool or client.
-async function insertOccurrences(q, { seriesId, roomId, bookedBy, purpose, attendeeCount, startHm, endHm, graceMinutes }, dates) {
+async function insertOccurrences(q, { seriesId, roomId, bookedBy, purpose, attendeeCount, startHm, endHm, graceMinutes, meetingType = 'internal' }, dates) {
   const skipped = [];
   let created = 0;
   for (const ds of dates) {
@@ -57,9 +57,9 @@ async function insertOccurrences(q, { seriesId, roomId, bookedBy, purpose, atten
     const state = clash.rows.length ? 'skipped' : 'confirmed';
     await q.query(
       `INSERT INTO bookings (room_id, booked_by, purpose, start_time, end_time,
-                             attendee_count, state, recurrence_id)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`,
-      [roomId, bookedBy, purpose, startISO, endISO, attendeeCount, state, seriesId]
+                             attendee_count, state, recurrence_id, meeting_type)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
+      [roomId, bookedBy, purpose, startISO, endISO, attendeeCount, state, seriesId, meetingType]
     );
     if (state === 'skipped') skipped.push(ds); else created++;
   }

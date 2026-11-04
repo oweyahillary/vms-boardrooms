@@ -7,16 +7,20 @@ exports.create = async (req, res) => {
   const client = await db.connect();
   try {
     if (req.admin.role === 'readonly')
-      return res.status(403).json({ error: 'Read-only accounts cannot book rooms.' });
+      return res.status(403).json({ error: 'Read-only accounts cannot book boardrooms.' });
 
     const {
       roomId, purpose, startHm, endHm, attendeeCount = 1,
       daysOfWeek, endType, endCount, endDate, firstDate,
+      meetingType = 'internal',
     } = req.body;
+
+    if (!['internal', 'visitor'].includes(meetingType))
+      return res.status(400).json({ error: 'Meeting type must be internal or visitor.' });
 
     // ── Validation ──
     if (!roomId || !startHm || !endHm || !firstDate)
-      return res.status(400).json({ error: 'Room, first date, start and end time are required.' });
+      return res.status(400).json({ error: 'Boardroom, first date, start and end time are required.' });
     if (!Array.isArray(daysOfWeek) || daysOfWeek.length === 0)
       return res.status(400).json({ error: 'Pick at least one day to repeat on.' });
     if (endHm <= startHm)
@@ -30,9 +34,9 @@ exports.create = async (req, res) => {
 
     const roomRes = await client.query(`SELECT * FROM rooms WHERE id=$1 AND is_active=true`, [roomId]);
     const room = roomRes.rows[0];
-    if (!room) return res.status(404).json({ error: 'Room not found or inactive.' });
+    if (!room) return res.status(404).json({ error: 'Boardroom not found or inactive.' });
     if (Number(attendeeCount) > room.capacity)
-      return res.status(400).json({ error: `Exceeds room capacity of ${room.capacity}.` });
+      return res.status(400).json({ error: `Exceeds boardroom capacity of ${room.capacity}.` });
 
     const days = [...new Set(daysOfWeek.map(Number))].filter((d) => d >= 0 && d <= 6);
 
@@ -40,12 +44,12 @@ exports.create = async (req, res) => {
     const seriesRow = await client.query(
       `INSERT INTO booking_series
          (room_id, booked_by, purpose, attendee_count, start_hm, end_hm,
-          days_of_week, first_date, end_type, end_count, end_date, last_generated)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) RETURNING *`,
+          days_of_week, first_date, end_type, end_count, end_date, last_generated, meeting_type)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) RETURNING *`,
       [roomId, req.admin.id, purpose, attendeeCount, startHm, endHm,
        days, firstDate, endType, endType === 'count' ? endCount : null,
        endType === 'date' ? endDate : null,
-       endType === 'never' ? rec.horizonDate() : null]
+       endType === 'never' ? rec.horizonDate() : null, meetingType]
     );
     const series = seriesRow.rows[0];
 
@@ -60,7 +64,7 @@ exports.create = async (req, res) => {
 
     const { created, skipped } = await rec.insertOccurrences(client, {
       seriesId: series.id, roomId, bookedBy: req.admin.id, purpose,
-      attendeeCount, startHm, endHm, graceMinutes: room.grace_minutes,
+      attendeeCount, startHm, endHm, graceMinutes: room.grace_minutes, meetingType,
     }, dates);
 
     // For 'never', last_generated is the horizon we just filled.
@@ -152,7 +156,7 @@ exports.topUpForUser = async (userId) => {
         await rec.insertOccurrences(db, {
           seriesId: s.id, roomId: s.room_id, bookedBy: s.booked_by, purpose: s.purpose,
           attendeeCount: s.attendee_count, startHm: s.start_hm, endHm: s.end_hm,
-          graceMinutes: s.grace_minutes,
+          graceMinutes: s.grace_minutes, meetingType: s.meeting_type,
         }, dates);
       }
       await db.query(`UPDATE booking_series SET last_generated=$1 WHERE id=$2`, [horizon, s.id]);

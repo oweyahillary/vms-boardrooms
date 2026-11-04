@@ -16,6 +16,7 @@ const FILES = [
   'migrate_v12.sql',
   'migrate_v13.sql',
   'migrate_v14.sql', // Supabase-only (RLS + storage bucket)
+  'migrate_v15.sql', // meeting type
 ];
 
 (async () => {

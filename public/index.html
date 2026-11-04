@@ -1222,7 +1222,7 @@
               <input
                 type="text"
                 id="hostSearch"
-                placeholder="Start typing an employee's name…"
+                placeholder="Type a name — pick from the list, or just type it"
                 autocomplete="off"
               />
               <input type="hidden" id="hostName" />
@@ -2073,15 +2073,22 @@
         if (!searchEl) return;
         let timer;
 
-        function clearSelection() {
-          document.getElementById("hostName").value = "";
+        // Typing sets a free-text host (for people not in the system);
+        // picking from the list also links the employee so they're notified.
+        function typedHost(q) {
+          document.getElementById("hostName").value = q;
           document.getElementById("hostUserId").value = "";
         }
 
-        function render(list) {
+        function render(list, q = "") {
           if (!list.length) {
-            resultsEl.style.display = "none";
-            resultsEl.innerHTML = "";
+            if (q.length >= 2) {
+              resultsEl.innerHTML = `<div style="padding:10px 12px;color:#9a9384;font-size:13px;">Not in the list — we’ll note <strong>${esc(q)}</strong> as your host.</div>`;
+              resultsEl.style.display = "block";
+            } else {
+              resultsEl.style.display = "none";
+              resultsEl.innerHTML = "";
+            }
             return;
           }
           resultsEl.innerHTML = list
@@ -2107,7 +2114,7 @@
 
         searchEl.addEventListener("input", () => {
           const q = searchEl.value.trim();
-          clearSelection();
+          typedHost(q);
           clearTimeout(timer);
           if (q.length < 2) {
             render([]);
@@ -2118,9 +2125,9 @@
               const res = await fetch(
                 `${API_BASE}/api/staff/directory?q=${encodeURIComponent(q)}`,
               );
-              render(await res.json());
+              render(await res.json(), q);
             } catch {
-              render([]);
+              render([], q);
             }
           }, 200);
         });

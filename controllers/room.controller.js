@@ -55,7 +55,7 @@ exports.list = async (req, res) => {
     res.json(withStatus);
   } catch (e) {
     logger.error({ event: 'rooms_list_failed', error: e.message });
-    res.status(500).json({ error: 'Could not fetch rooms.' });
+    res.status(500).json({ error: 'Could not fetch boardrooms.' });
   }
 };
 
@@ -64,7 +64,7 @@ exports.create = async (req, res) => {
   try {
     const { name, capacity, min_attendees = 1, purpose_tag, grace_minutes = 30 } = req.body;
     if (!name || !capacity)
-      return res.status(400).json({ error: 'Room name and capacity are required.' });
+      return res.status(400).json({ error: 'Boardroom name and capacity are required.' });
 
     const result = await db.query(
       `INSERT INTO rooms (name, capacity, min_attendees, purpose_tag, grace_minutes)
@@ -75,7 +75,7 @@ exports.create = async (req, res) => {
     res.json({ success: true, room: result.rows[0] });
   } catch (e) {
     logger.error({ event: 'room_create_failed', error: e.message });
-    res.status(500).json({ error: 'Could not create room.' });
+    res.status(500).json({ error: 'Could not create boardroom.' });
   }
 };
 
@@ -93,7 +93,7 @@ exports.update = async (req, res) => {
     res.json({ success: true });
   } catch (e) {
     logger.error({ event: 'room_update_failed', error: e.message });
-    res.status(500).json({ error: 'Could not update room.' });
+    res.status(500).json({ error: 'Could not update boardroom.' });
   }
 };
 
@@ -112,7 +112,7 @@ exports.remove = async (req, res) => {
     res.json({ success: true, softDeleted: false });
   } catch (e) {
     logger.error({ event: 'room_delete_failed', error: e.message });
-    res.status(500).json({ error: 'Could not delete room.' });
+    res.status(500).json({ error: 'Could not delete boardroom.' });
   }
 };
 
@@ -128,7 +128,7 @@ exports.schedule = async (req, res) => {
     const dayStart = dateOk ? `'${req.query.date}'::date` : 'CURRENT_DATE';
 
     const rr = await db.query(`SELECT * FROM rooms WHERE id=$1`, [id]);
-    if (!rr.rows.length) return res.status(404).json({ error: 'Room not found.' });
+    if (!rr.rows.length) return res.status(404).json({ error: 'Boardroom not found.' });
     const room = rr.rows[0];
 
     const b = await db.query(
@@ -166,6 +166,6 @@ exports.schedule = async (req, res) => {
     res.json({ room, bookings: b.rows, status, current, nextFree });
   } catch (e) {
     logger.error({ event: 'room_schedule_failed', error: e.message });
-    res.status(500).json({ error: 'Could not fetch room schedule.' });
+    res.status(500).json({ error: 'Could not fetch boardroom schedule.' });
   }
 };

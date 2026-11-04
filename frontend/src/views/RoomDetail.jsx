@@ -80,7 +80,7 @@ export default function RoomDetail({ navigate, roomId, user }) {
 
   return (
     <div style={{ maxWidth: 720 }}>
-      <button className="btn btn-ghost btn-sm" onClick={() => navigate('rooms')} style={{ marginBottom: 14 }}>← Rooms</button>
+      <button className="btn btn-ghost btn-sm" onClick={() => navigate('rooms')} style={{ marginBottom: 14 }}>← Boardrooms</button>
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <div>
@@ -142,7 +142,7 @@ export default function RoomDetail({ navigate, roomId, user }) {
 
       {canBook && (
         <button className="btn btn-primary btn-block section-gap" onClick={() => navigate('book', { prefillRoomId: room.id })}>
-          Book a time in this room
+          Book a time in this boardroom
         </button>
       )}
 

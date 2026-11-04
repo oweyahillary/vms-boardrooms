@@ -22,6 +22,9 @@ export default function BookRoom({ navigate, prefillRoomId, prefillVisit, prefil
   const [purpose, setPurpose] = useState(isReschedule ? (rescheduleBooking.purpose || '') : '');
   const [attendeeCount, setAttendeeCount] = useState(isReschedule ? rescheduleBooking.attendee_count : 3);
   const [attendees, setAttendees] = useState(prefillVisit ? [prefillVisit] : []);
+  const [meetingType, setMeetingType] = useState(prefillVisit ? 'visitor' : 'internal');
+  const [guests, setGuests] = useState([]);       // typed names of visitors not checked in yet
+  const [guestInput, setGuestInput] = useState('');
   const [msg, setMsg] = useState(null);
   const [busy, setBusy] = useState(false);
 
@@ -57,10 +60,18 @@ export default function BookRoom({ navigate, prefillRoomId, prefillVisit, prefil
   };
   const removeAttendee = (id) => setAttendees(attendees.filter((a) => a.visit_id !== id));
   const availableVisitors = visitors.filter((v) => !attendees.some((a) => a.visit_id === v.visit_id));
+  const addGuest = () => {
+    const nm = guestInput.trim();
+    if (nm && !guests.includes(nm)) setGuests([...guests, nm]);
+    setGuestInput('');
+  };
+  const isVisitor = meetingType === 'visitor';
 
   async function submit() {
     setMsg(null);
-    if (!roomId) return setMsg({ type: 'err', text: 'Pick a room first.' });
+    if (!roomId) return setMsg({ type: 'err', text: 'Pick a boardroom first.' });
+    if (!isReschedule && !repeat && isVisitor && attendees.length === 0 && guests.length === 0)
+      return setMsg({ type: 'err', text: 'Add at least one visitor, or switch to Internal team.' });
     if (toISO(date, end) <= toISO(date, start))
       return setMsg({ type: 'err', text: 'End time must be after the start time.' });
     setBusy(true);
@@ -77,7 +88,7 @@ export default function BookRoom({ navigate, prefillRoomId, prefillVisit, prefil
         const res = await api.post('/boardrooms/series', {
           roomId: Number(roomId), purpose, firstDate: date,
           startHm: start, endHm: end, attendeeCount: Number(attendeeCount),
-          daysOfWeek: days, endType,
+          meetingType, daysOfWeek: days, endType,
           endCount: endType === 'count' ? Number(endCount) : undefined,
           endDate: endType === 'date' ? endDate : undefined,
         });
@@ -90,7 +101,9 @@ export default function BookRoom({ navigate, prefillRoomId, prefillVisit, prefil
           roomId: Number(roomId), purpose,
           startTime: toISO(date, start), endTime: toISO(date, end),
           attendeeCount: Number(attendeeCount),
-          visitIds: attendees.map((a) => a.visit_id),
+          meetingType,
+          visitIds: isVisitor ? attendees.map((a) => a.visit_id) : [],
+          externalNames: isVisitor ? guests : [],
         });
         const flag = res.belowMinimum ? ' (below this room’s minimum — flagged)' : '';
         setMsg({ type: 'ok', text: `Booked${flag}. Redirecting…` });
@@ -104,16 +117,29 @@ export default function BookRoom({ navigate, prefillRoomId, prefillVisit, prefil
 
   return (
     <div style={{ maxWidth: 560 }}>
-      <h1 className="page-title">{isReschedule ? 'Reschedule booking' : 'Book a room'}</h1>
+      <h1 className="page-title">{isReschedule ? 'Reschedule booking' : 'Book a boardroom'}</h1>
       <div className="page-sub">
-        {isReschedule ? `Move your booking in ${roomName || 'this room'} to a new time.` : 'Reserve a boardroom and add who’s joining.'}
+        {isReschedule ? `Move your booking in ${roomName || 'this boardroom'} to a new time.` : 'Reserve a boardroom and add who’s joining.'}
       </div>
 
       {msg && <div className={'notice ' + (msg.type === 'ok' ? 'notice-ok' : 'notice-err')}>{msg.text}</div>}
 
       <div className="card">
+        {!isReschedule && (
+          <div className="field">
+            <label>Meeting type</label>
+            <div className="day-pills">
+              {[['internal', 'Internal team'], ['visitor', 'With visitor(s)']].map(([val, lbl]) => (
+                <button key={val} type="button"
+                  className={'day-pill' + (meetingType === val ? ' selected' : '')}
+                  onClick={() => setMeetingType(val)}>{lbl}</button>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div className="field">
-          <label>Room</label>
+          <label>Boardroom</label>
           <select value={roomId} onChange={(e) => setRoomId(e.target.value)} disabled={isReschedule}>
             {rooms.map((r) => (
               <option key={r.id} value={r.id}>{r.name} — seats {r.capacity}</option>
@@ -149,7 +175,7 @@ export default function BookRoom({ navigate, prefillRoomId, prefillVisit, prefil
             <div className="field">
               <label>Attendees</label>
               <input type="number" min="1" value={attendeeCount} onChange={(e) => setAttendeeCount(e.target.value)} />
-              {room && <div className="hint">Room capacity: {room.capacity}</div>}
+              {room && <div className="hint">Boardroom capacity: {room.capacity}</div>}
             </div>
 
             {/* ── Repeat / recurrence ── */}
@@ -202,11 +228,13 @@ export default function BookRoom({ navigate, prefillRoomId, prefillVisit, prefil
               </>
             )}
 
-            {!repeat && (
+            {isVisitor && !repeat && (
             <div className="field">
               <label>Visitors joining</label>
-              {attendees.length === 0 && <div className="hint">Add any of today’s visitors who are attending.</div>}
-              {attendees.length > 0 && (
+              {attendees.length === 0 && guests.length === 0 && (
+                <div className="hint">Pick a visitor who has checked in today, or type a guest’s name if they haven’t arrived yet.</div>
+              )}
+              {(attendees.length > 0 || guests.length > 0) && (
                 <div className="chips">
                   {attendees.map((a) => (
                     <span key={a.visit_id} className="chip">
@@ -214,8 +242,20 @@ export default function BookRoom({ navigate, prefillRoomId, prefillVisit, prefil
                       <button onClick={() => removeAttendee(a.visit_id)} aria-label="Remove">×</button>
                     </span>
                   ))}
+                  {guests.map((nm) => (
+                    <span key={'g:' + nm} className="chip">
+                      {nm}
+                      <button onClick={() => setGuests(guests.filter((x) => x !== nm))} aria-label="Remove">×</button>
+                    </span>
+                  ))}
                 </div>
               )}
+              <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+                <input type="text" value={guestInput} placeholder="Guest name (not checked in yet)"
+                  onChange={(e) => setGuestInput(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addGuest(); } }} />
+                <button type="button" className="btn btn-ghost btn-sm" onClick={addGuest}>Add</button>
+              </div>
               {availableVisitors.length > 0 && (
                 <select value="" onChange={(e) => {
                   const v = visitors.find((x) => String(x.visit_id) === e.target.value);

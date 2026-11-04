@@ -44,7 +44,7 @@ export default function MyBookings({ navigate }) {
   return (
     <div>
       <h1 className="page-title">My bookings</h1>
-      <div className="page-sub">Rooms you’ve reserved.</div>
+      <div className="page-sub">Boardrooms you’ve reserved.</div>
 
       <div className="btn-row section-gap">
         {['today', 'week', 'month'].map((r) => (
@@ -59,7 +59,7 @@ export default function MyBookings({ navigate }) {
       {!rows && !err && <div className="empty">Loading…</div>}
       {rows && rows.length === 0 && (
         <div className="empty">
-          No bookings yet. <button className="btn btn-ghost btn-sm" onClick={() => navigate('book')}>Book a room</button>
+          No bookings yet. <button className="btn btn-ghost btn-sm" onClick={() => navigate('book')}>Book a boardroom</button>
         </div>
       )}
 
@@ -75,6 +75,7 @@ export default function MyBookings({ navigate }) {
                     <strong className="serif" style={{ fontSize: 15 }}>{b.room_name}</strong>
                     <span className={'badge ' + st.cls}>{st.label}</span>
                     {b.recurrence_id && <span className="badge badge-repeat">Repeats</span>}
+                    <span className="badge">{b.meeting_type === 'visitor' ? 'With visitor' : 'Internal'}</span>
                   </div>
                   <div style={{ fontSize: 13 }}>{b.purpose || 'Meeting'}</div>
                   <div className="muted" style={{ fontSize: 12, marginTop: 2 }}>

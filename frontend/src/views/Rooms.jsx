@@ -18,12 +18,12 @@ export default function Rooms({ navigate, user }) {
 
   return (
     <div>
-      <h1 className="page-title">Rooms</h1>
+      <h1 className="page-title">Boardrooms</h1>
       <div className="page-sub">Live availability across the boardrooms.</div>
 
       {err && <div className="notice notice-err">{err}</div>}
       {!rooms && !err && <div className="empty">Loading…</div>}
-      {rooms && rooms.length === 0 && <div className="empty">No rooms have been set up yet.</div>}
+      {rooms && rooms.length === 0 && <div className="empty">No boardrooms have been set up yet.</div>}
 
       {rooms && rooms.length > 0 && (
         <div className="grid">

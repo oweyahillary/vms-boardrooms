@@ -33,13 +33,13 @@ function RoomUtilisation() {
           <div className="grid section-gap" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
             <div className="card"><div className="muted" style={{ fontSize: 11, textTransform: 'uppercase' }}>Bookings</div><div className="serif" style={{ fontSize: 26 }}>{data.totals.bookings}</div></div>
             <div className="card"><div className="muted" style={{ fontSize: 11, textTransform: 'uppercase' }}>Hours booked</div><div className="serif" style={{ fontSize: 26 }}>{data.totals.hours}</div></div>
-            <div className="card"><div className="muted" style={{ fontSize: 11, textTransform: 'uppercase' }}>Active rooms</div><div className="serif" style={{ fontSize: 26 }}>{data.totals.rooms}</div></div>
+            <div className="card"><div className="muted" style={{ fontSize: 11, textTransform: 'uppercase' }}>Active boardrooms</div><div className="serif" style={{ fontSize: 26 }}>{data.totals.rooms}</div></div>
           </div>
-          {data.rooms.length === 0 && <div className="empty">No rooms to report on.</div>}
+          {data.rooms.length === 0 && <div className="empty">No boardrooms to report on.</div>}
           {data.rooms.length > 0 && (
             <div className="table-card">
               <table>
-                <thead><tr><th>Room</th><th>Bookings</th><th>Hours</th><th style={{ width: '40%' }}>Utilisation</th></tr></thead>
+                <thead><tr><th>Boardroom</th><th>Bookings</th><th>Hours</th><th style={{ width: '40%' }}>Utilisation</th></tr></thead>
                 <tbody>
                   {data.rooms.map((r) => (
                     <tr key={r.id}>
@@ -166,14 +166,14 @@ function VisitorReport() {
   );
 }
 
-const TABS = [['rooms', 'Room utilisation'], ['visitors', 'Visitors']];
+const TABS = [['rooms', 'Boardroom utilisation'], ['visitors', 'Visitors']];
 
 export default function Reports() {
   const [tab, setTab] = useState('rooms');
   return (
     <div style={{ maxWidth: 720 }}>
       <h1 className="page-title">Reports</h1>
-      <div className="page-sub">Room utilisation and visitor activity over time.</div>
+      <div className="page-sub">Boardroom utilisation and visitor activity over time.</div>
 
       <div className="btn-row section-gap" style={{ borderBottom: '1px solid var(--border)', paddingBottom: 12 }}>
         {TABS.map(([t, label]) => (

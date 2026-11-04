@@ -53,7 +53,7 @@ export default function MyVisitors({ navigate }) {
                   <td>
                     <button className="btn btn-ghost btn-sm"
                       onClick={() => navigate('book', { prefillVisit: { visit_id: v.visit_id, name: v.name } })}>
-                      Book a room
+                      Book a boardroom
                     </button>
                   </td>
                 </tr>
